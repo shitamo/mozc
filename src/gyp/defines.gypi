@@ -63,6 +63,10 @@
     # use_libibus represents if ibus library is used or not.
     # This option is only for Linux.
     'use_libibus%': '0',
+
+	# use_system_jsoncpp represents if system version or bundled version
+	# of jsoncpp library is used.
+	'use_system_jsoncpp%': '1',
   },
   'target_defaults': {
     'defines': [

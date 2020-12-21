@@ -31,32 +31,60 @@
   'targets': [
     {
       'target_name': 'jsoncpp',
-      'type': 'static_library',
-      'variables': {
-        'jsoncpp_root': '<(third_party_dir)/jsoncpp',
-        'jsoncpp_srcs': [
-          '<(jsoncpp_root)/src/lib_json/json_reader.cpp',
-          '<(jsoncpp_root)/src/lib_json/json_value.cpp',
-          '<(jsoncpp_root)/src/lib_json/json_writer.cpp',
-        ],
-        'jsoncpp_include_dirs': ['<(jsoncpp_root)/include'],
-        'jsoncpp_additional_macros': ['JSON_USE_EXCEPTION=0'],
-      },
-      'defines': [
-        '<@(jsoncpp_additional_macros)',
+      'conditions': [
+        ['use_system_jsoncpp==1', {
+          'type': 'none',
+          'variables': {
+            'jsoncpp_additional_macros': [
+              'JSON_USE_EXCEPTION=0',
+              'MOZC_USE_SYSTEM_JSONCPP',
+            ],
+          },
+          'all_dependent_settings': {
+            'defines': [
+              '<@(jsoncpp_additional_macros)',
+            ],
+            'cflags': [
+              '<!@(pkg-config --cflags jsoncpp)',
+            ],
+            'link_settings': {
+              'libraries': [
+                '<!@(pkg-config --libs-only-l jsoncpp)',
+              ],
+              'ldflags': [
+                '<!@(pkg-config --libs-only-L jsoncpp)',
+              ],
+            }
+          },
+        }, {
+          'type': 'static_library',
+          'variables': {
+            'jsoncpp_root': '<(third_party_dir)/jsoncpp',
+            'jsoncpp_srcs': [
+              '<(jsoncpp_root)/src/lib_json/json_reader.cpp',
+              '<(jsoncpp_root)/src/lib_json/json_value.cpp',
+              '<(jsoncpp_root)/src/lib_json/json_writer.cpp',
+            ],
+            'jsoncpp_include_dirs': ['<(jsoncpp_root)/include'],
+            'jsoncpp_additional_macros': ['JSON_USE_EXCEPTION=0'],
+          },
+          'defines': [
+            '<@(jsoncpp_additional_macros)',
+          ],
+          'sources': [
+            '<@(jsoncpp_srcs)',
+            'jsoncpp.h',
+          ],
+          'include_dirs': [
+            '<@(jsoncpp_include_dirs)',
+          ],
+          'all_dependent_settings': {
+            'defines': [
+              '<@(jsoncpp_additional_macros)',
+            ],
+          },
+        }],
       ],
-      'sources': [
-        '<@(jsoncpp_srcs)',
-        'jsoncpp.h',
-      ],
-      'include_dirs': [
-        '<@(jsoncpp_include_dirs)',
-      ],
-      'all_dependent_settings': {
-        'defines': [
-          '<@(jsoncpp_additional_macros)',
-        ],
-      },
     },
   ],
 }
