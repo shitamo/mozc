@@ -41,14 +41,12 @@ compiler: clang
 
 env:
   - TARGET_PLATFORM=Linux
-  - TARGET_PLATFORM=NaCl
   - TARGET_PLATFORM=Mac
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y clang libc++-dev libc++abi-dev python python-six python3-six pkg-config git curl bzip2 unzip make ninja-build; fi
   - if [ $TARGET_PLATFORM == Linux ]; then sudo apt-get install -y libibus-1.0-dev libglib2.0-dev qtbase5-dev libgtk2.0-dev libxcb-xfixes0-dev; fi
-  - if [ $TARGET_PLATFORM == NaCl ]; then sudo apt-get install -y libc6-i386 lib32stdc++6; fi
 
 install:
   - if [ $TRAVIS_OS_NAME == linux ]; then git -C src/third_party clone https://chromium.googlesource.com/chromium/tools/depot_tools.git; fi
@@ -58,15 +56,12 @@ install:
   - if [ $TARGET_PLATFORM == Mac ]; then git -C src/third_party clone https://chromium.googlesource.com/chromium/tools/depot_tools.git; fi
   - if [ $TARGET_PLATFORM == Mac ]; then export PATH="$PATH":`pwd`/src/third_party/depot_tools; fi
   - if [ $TARGET_PLATFORM == Mac ]; then brew update && brew install qt5; fi
-  - if [ $TARGET_PLATFORM == NaCl ]; then cd src/third_party && curl -LO http://storage.googleapis.com/nativeclient-mirror/nacl/nacl_sdk/nacl_sdk.zip && unzip nacl_sdk.zip && rm nacl_sdk.zip && cd nacl_sdk && ./naclsdk install pepper_49 && cd ../../../; fi
 
 script:
   - cd ./src
   - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py gyp --target_platform=Linux; fi
   - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py build -c Release package; fi
   - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py runtests -c Release; fi
-  - if [ $TARGET_PLATFORM == NaCl ]; then python build_mozc.py gyp --target_platform=NaCl --nacl_sdk_root=`pwd`/third_party/nacl_sdk/pepper_49; fi
-  - if [ $TARGET_PLATFORM == NaCl ]; then python build_mozc.py build -c Release package; fi
   - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py gyp --qtdir=/usr/local/opt/qt5; fi
   - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py build -c Release mac/mac.gyp:GoogleJapaneseInput mac/mac.gyp:gen_launchd_confs; fi
   - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py runtests -c Release; fi
@@ -77,5 +72,3 @@ matrix:
     env: TARGET_PLATFORM=Mac
   - os: osx
     env: TARGET_PLATFORM=Linux
-  - os: osx
-    env: TARGET_PLATFORM=NaCl
