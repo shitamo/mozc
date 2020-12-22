@@ -213,7 +213,6 @@
           ['compiler_target=="clang" or compiler_target=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
-              '-stdlib=libc++',
             ],
           }],
         ],
@@ -233,7 +232,6 @@
           ['compiler_host=="clang" or compiler_host=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
-              '-stdlib=libc++',
             ],
           }],
         ],
