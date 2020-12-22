@@ -213,6 +213,7 @@
           ['compiler_target=="clang" or compiler_target=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
+              '-DCLANG_DEFAULT_CXX_STDLIB=libc++',
             ],
           }],
         ],
@@ -232,6 +233,7 @@
           ['compiler_host=="clang" or compiler_host=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
+              '-DCLANG_DEFAULT_CXX_STDLIB=libc++',
             ],
           }],
         ],
