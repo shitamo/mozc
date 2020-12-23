@@ -12,7 +12,7 @@ Build Status
 ------------
 
 | Linux |
-|:----------------------------:|:------:|
+|:----------------------------:|
 [![Build Status](https://travis-ci.org/shitamo/mozc.svg?branch=master)](https://travis-ci.org/shitamo/mozc)|
 
 What's Mozc?
