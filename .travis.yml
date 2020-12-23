@@ -29,11 +29,9 @@
 
 sudo: required
 dist: focal
-osx_image: xcode9.2
 
 os:
   - linux
-  - osx
 
 language: cpp
 
@@ -41,7 +39,6 @@ compiler: clang
 
 env:
   - TARGET_PLATFORM=Linux
-  - TARGET_PLATFORM=Mac
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
@@ -53,22 +50,13 @@ install:
   - if [ $TRAVIS_OS_NAME == linux ]; then export PATH="$PATH":`pwd`/src/third_party/depot_tools; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then unset CC; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then unset CXX; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then git -C src/third_party clone https://chromium.googlesource.com/chromium/tools/depot_tools.git; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then export PATH="$PATH":`pwd`/src/third_party/depot_tools; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then brew update && brew install qt5; fi
 
 script:
   - cd ./src
   - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py gyp --target_platform=Linux; fi
   - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py build -c Release package; fi
-  - if [ $TARGET_PLATFORM == Linux ]; then python build_mozc.py runtests -c Release; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py gyp --qtdir=/usr/local/opt/qt5; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py build -c Release mac/mac.gyp:GoogleJapaneseInput mac/mac.gyp:gen_launchd_confs; fi
-  - if [ $TARGET_PLATFORM == Mac ]; then python build_mozc.py runtests -c Release; fi
 
 matrix:
   exclude:
   - os: linux
     env: TARGET_PLATFORM=Mac
-  - os: osx
-    env: TARGET_PLATFORM=Linux
