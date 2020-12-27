@@ -105,7 +105,6 @@
     ],
     # Libraries for GNU/Linux environment.
     'linux_ldflags': [
-      '-lc++',
       '-pthread',
     ],
 
