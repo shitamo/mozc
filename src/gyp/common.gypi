@@ -253,6 +253,7 @@
           # We use deprecated <hash_map> and <hash_set> instead of upcoming
           # <unordered_map> and <unordered_set>.
           '-Wno-deprecated',
+          '-std=c++17',
         ],
         'conditions': [
           ['target_platform=="Linux"', {
