@@ -204,6 +204,7 @@
               '-Wtype-limits',
             ],
             'cflags_cc': [
+              '-stdlib=libc++',
               '-Wno-covered-switch-default',
               '-Wno-unnamed-type-template-args',
               '-Wno-c++11-narrowing',
@@ -212,7 +213,6 @@
           ['compiler_target=="clang" or compiler_target=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
-              '-DCLANG_DEFAULT_CXX_STDLIB=libc++',
             ],
           }],
         ],
@@ -224,6 +224,7 @@
               '-Wtype-limits',
             ],
             'cflags_cc': [
+              '-stdlib=libc++',
               '-Wno-covered-switch-default',
               '-Wno-unnamed-type-template-args',
               '-Wno-c++11-narrowing',
@@ -232,7 +233,6 @@
           ['compiler_host=="clang" or compiler_host=="gcc"', {
             'cflags_cc': [
               '-std=c++17',
-              '-DCLANG_DEFAULT_CXX_STDLIB=libc++',
             ],
           }],
         ],
