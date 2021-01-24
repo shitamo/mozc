@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #include "request/conversion_request.h"
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
+#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 
 namespace mozc {
@@ -45,7 +46,11 @@ void SetSegments(Segments *segments, absl::string_view cand_value) {
   Segment *segment = segments->add_segment();
   segment->set_key("Testてすと");
   Segment::Candidate *candidate = segment->add_candidate();
+#ifdef ABSL_USES_STD_STRING_VIEW
+  candidate->value = cand_value;
+#else
   candidate->value = std::string(cand_value);
+#endif  // ABSL_USES_STD_STRING_VIEW
 
   // Add meta candidates
   Segment::Candidate *meta_cand = segment->add_meta_candidate();
@@ -55,7 +60,7 @@ void SetSegments(Segments *segments, absl::string_view cand_value) {
 
 class ConverterMockTest : public ::testing::Test {
  protected:
-  void SetUp() override { mock_.reset(new ConverterMock); }
+  void SetUp() override { mock_ = absl::make_unique<ConverterMock>(); }
 
   ConverterMock *GetMock() { return mock_.get(); }
 

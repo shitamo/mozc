@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,7 @@
 #include "rewriter/calculator/calculator_mock.h"
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 namespace {
@@ -109,7 +110,7 @@ class CalculatorRewriterTest : public ::testing::Test {
   CalculatorMock &calculator_mock() { return calculator_mock_; }
 
   CalculatorRewriter *BuildCalculatorRewriterWithConverterMock() {
-    converter_mock_.reset(new ConverterMock);
+    converter_mock_ = absl::make_unique<ConverterMock>();
     return new CalculatorRewriter(converter_mock_.get());
   }
 

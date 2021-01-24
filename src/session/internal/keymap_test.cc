@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,19 @@
 // Keymap utils of Mozc interface.
 
 #include "session/internal/keymap.h"
-#include "session/internal/keymap-inl.h"
 
 #include <memory>
 #include <sstream>
 #include <vector>
 
 #include "base/config_file_stream.h"
+#include "base/flags.h"
 #include "base/system_util.h"
 #include "composer/key_parser.h"
 #include "config/config_handler.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "session/internal/keymap-inl.h"
 #include "session/internal/keymap_factory.h"
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
@@ -52,7 +53,7 @@ namespace keymap {
 class KeyMapTest : public testing::Test {
  protected:
   void SetUp() override {
-    SystemUtil::SetUserProfileDirectory(FLAGS_test_tmpdir);
+    SystemUtil::SetUserProfileDirectory(mozc::GetFlag(FLAGS_test_tmpdir));
   }
 
   bool isInputModeXCommandSupported() const {

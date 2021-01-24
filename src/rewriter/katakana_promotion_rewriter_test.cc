@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #include "rewriter/transliteration_rewriter.h"
 #include "testing/base/public/gunit.h"
 #include "testing/base/public/mozctest.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 namespace {
@@ -66,8 +67,8 @@ int GetCandidateIndexByValue(const std::string &value, const Segment &segment) {
 class KatakanaPromotionRewriterTest : public ::testing::Test {
  protected:
   KatakanaPromotionRewriterTest() {
-    t13n_rewriter_.reset(new TransliterationRewriter(
-        dictionary::POSMatcher(mock_data_manager_.GetPOSMatcherData())));
+    t13n_rewriter_ = absl::make_unique<TransliterationRewriter>(
+        dictionary::POSMatcher(mock_data_manager_.GetPOSMatcherData()));
 
     desktop_request_.set_mixed_conversion(false);
     desktop_conv_request_.set_request(&desktop_request_);

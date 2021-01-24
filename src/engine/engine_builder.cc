@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #include "data_manager/data_manager.h"
 #include "engine/engine.h"
 #include "protocol/engine_builder.pb.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 namespace {
@@ -124,7 +125,7 @@ void EngineBuilder::PrepareAsync(const EngineReloadRequest &request,
     preparator_->Join();
     VLOG(1) << "Previously loaded data is discarded";
   }
-  preparator_.reset(new Preparator(request));
+  preparator_ = absl::make_unique<Preparator>(request);
   preparator_->SetJoinable(true);
   preparator_->Start("EngineBuilder::Preparator");
   response->set_status(EngineReloadResponse::ACCEPTED);

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,10 +40,6 @@ load(
 package(default_visibility = [
     "//:__subpackages__",
 ])
-
-test_suite(
-    name = "nacl_test",
-)
 
 cc_library_mozc(
     name = "transliterator_interface",
@@ -179,6 +175,7 @@ cc_test_mozc(
         "//composer:composition_interface",
         "//composer:table",
         "//testing:gunit_main",
+        "@com_google_absl//absl/memory",
     ],
 )
 

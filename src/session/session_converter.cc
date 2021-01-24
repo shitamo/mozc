@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -428,7 +428,7 @@ bool SessionConverter::SuggestWithPreferences(
     conversion_request.set_create_partial_candidates(
         request_->auto_partial_suggestion());
     conversion_request.set_use_actual_converter_for_realtime_conversion(
-        FLAGS_use_actual_converter_for_realtime_conversion);
+        mozc::GetFlag(FLAGS_use_actual_converter_for_realtime_conversion));
     if (!converter_->StartSuggestionForRequest(conversion_request,
                                                segments_.get())) {
       // TODO(komatsu): Because suggestion is a prefix search, once
@@ -504,7 +504,7 @@ bool SessionConverter::PredictWithPreferences(
   if (predict_expand || predict_first) {
     ConversionRequest conversion_request(&composer, request_, config_);
     conversion_request.set_use_actual_converter_for_realtime_conversion(
-        FLAGS_use_actual_converter_for_realtime_conversion);
+        mozc::GetFlag(FLAGS_use_actual_converter_for_realtime_conversion));
     if (!converter_->StartPredictionForRequest(conversion_request,
                                                segments_.get())) {
       LOG(WARNING) << "StartPredictionForRequest() failed";
@@ -556,7 +556,7 @@ bool SessionConverter::ExpandSuggestionWithPreferences(
   // We want prediction candidates,
   // but want to set candidates' category SUGGESTION.
   // TODO(matsuzakit or yamaguchi): Refactor following lines,
-  //     after implemention of partial conversion.
+  //     after implementation of partial conversion.
 
   // Initialize the segments for prediction.
   SetConversionPreferences(preferences, segments_.get());
@@ -576,7 +576,7 @@ bool SessionConverter::ExpandSuggestionWithPreferences(
     conversion_request.set_create_partial_candidates(
         request_->auto_partial_suggestion());
     conversion_request.set_use_actual_converter_for_realtime_conversion(
-        FLAGS_use_actual_converter_for_realtime_conversion);
+        mozc::GetFlag(FLAGS_use_actual_converter_for_realtime_conversion));
     // This is abuse of StartPrediction().
     // TODO(matsuzakit or yamaguchi): Add ExpandSuggestion method
     //    to Converter class.
@@ -1138,6 +1138,13 @@ void SessionConverter::FillOutput(const composer::Composer &composer,
   // All candidate words
   if (CheckState(SUGGESTION | PREDICTION | CONVERSION)) {
     FillAllCandidateWords(output->mutable_all_candidate_words());
+  }
+
+  // For debug. Removed candidate words through the conversion process.
+  if (CheckState(SUGGESTION | PREDICTION | CONVERSION)) {
+    SessionOutput::FillRemovedCandidates(
+        segments_->conversion_segment(segment_index_),
+        output->mutable_removed_candidate_words_for_debug());
   }
 }
 

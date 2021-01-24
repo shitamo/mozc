@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,10 +39,6 @@ load(
 
 package(default_visibility = ["//:__subpackages__"])
 
-test_suite(
-    name = "nacl_test",
-)
-
 cc_library_mozc(
     name = "lru_storage",
     srcs = ["lru_storage.cc"],
@@ -59,6 +55,7 @@ cc_library_mozc(
         "//base:mozc_hash_set",
         "//base:port",
         "//base:util",
+        "@com_google_absl//absl/memory",
         "@com_google_absl//absl/strings",
     ],
 )
@@ -91,6 +88,7 @@ cc_library_mozc(
         "//base",
         "//base:logging",
         "//base:port",
+        "@com_google_absl//absl/memory",
     ],
 )
 
@@ -248,5 +246,6 @@ cc_test_mozc(
         "//base:logging",
         "//base:system_util",
         "//testing:gunit_main",
+        "@com_google_absl//absl/memory",
     ],
 )

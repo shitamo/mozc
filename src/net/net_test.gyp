@@ -1,4 +1,4 @@
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,20 +32,6 @@
     'relative_dir': 'net',
   },
   'targets': [
-    {
-      'target_name': 'http_client_mock_test',
-      'type': 'executable',
-      'sources': [
-        'http_client_mock_test.cc',
-      ],
-      'dependencies': [
-        '../testing/testing.gyp:gtest_main',
-        'net.gyp:http_client_mock',
-      ],
-      'variables': {
-        'test_size': 'small',
-      },
-    },
     {
       'target_name': 'jsonpath_test',
       'type': 'executable',
@@ -107,7 +93,6 @@
       'target_name': 'net_all_test',
       'type': 'none',
       'dependencies': [
-        'http_client_mock_test',
         'jsonpath_test',
         'json_util_test',
       ],

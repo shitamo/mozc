@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -97,13 +97,14 @@ int main(int argc, char **argv) {
 
     Convert(query, &ios_engine, &command);
 
-    if (FLAGS_show_full) {
+    if (mozc::GetFlag(FLAGS_show_full)) {
       std::cout << command.Utf8DebugString() << std::endl;
     } else {
       std::cout << "----- preedit -----\n"
                 << command.output().preedit().Utf8DebugString() << std::endl;
       const auto &cands = command.output().candidates();
-      const int size = std::min(FLAGS_candsize, cands.candidate_size());
+      const int size = std::min(mozc::GetFlag(FLAGS_candsize),
+                                cands.candidate_size());
       for (int i = 0; i < size; ++i) {
         std::cout << "----- candidate " << i << " -----\n"
                   << cands.candidate(i).Utf8DebugString() << std::endl;

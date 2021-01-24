@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,11 +38,6 @@ load(
 package(default_visibility = [
     "//:__subpackages__",
 ])
-
-test_suite(
-    name = "nacl_test",
-    tags = ["-disable_on_nacl_test"],
-)
 
 cc_library_mozc(
     name = "composer",
@@ -241,7 +236,6 @@ cc_test_mozc(
     size = "small",
     srcs = ["composer_benchmark_test.cc"],
     requires_full_emulation = False,
-    tags = ["disable_on_nacl_test"],
     deps = [
         ":composer",
         ":key_parser",
@@ -259,5 +253,6 @@ cc_test_mozc(
         "//testing:gunit_main",
         "//testing:mozctest",
         "//testing/base/public:gunit_main",
+        "@com_google_absl//absl/memory",
     ],
 )

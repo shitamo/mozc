@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,8 @@ namespace mozc {
 namespace {
 
 TEST(MmapTest, MmapTest) {
-  const std::string filename = FileUtil::JoinPath(FLAGS_test_tmpdir, "test.db");
+  const std::string filename =
+      FileUtil::JoinPath(mozc::GetFlag(FLAGS_test_tmpdir), "test.db");
 
   const size_t kFileNameSize[] = {1, 100, 1024, 8192};
   for (int i = 0; i < arraysize(kFileNameSize); ++i) {

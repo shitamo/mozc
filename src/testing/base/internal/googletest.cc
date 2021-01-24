@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,8 @@ string GetTestTmpdir() {
 // Get absolute path to this executable. Corresponds to argv[0] plus
 // directory information. E.g like "/spam/eggs/foo_unittest".
 string GetProgramPath() {
-  const string &program_invocation_name = FLAGS_program_invocation_name;
+  const string& program_invocation_name =
+      mozc::GetFlag(FLAGS_program_invocation_name);
   if (program_invocation_name.empty() || program_invocation_name[0] == '/') {
     return program_invocation_name;
   }
@@ -113,14 +114,13 @@ string GetTestSrcdir() {
 
   const string srcdir(kMozcDataDir);
 
-#if !defined(OS_NACL) && !defined(OS_ANDROID)
-  // TestSrcdir is not supported in NaCl and Android.
-  // TODO(horo): Consider how to implement TestSrcdir in NaCl.
+#if !defined(OS_ANDROID)
+  // TestSrcdir is not supported in Android.
   // FIXME(komatsu): We should implement "genrule" and "exports_files"
   // in build.py to install the data files into srcdir.
   CHECK_EQ(access(srcdir.c_str(), R_OK | X_OK), 0)
       << "Access failure: " << srcdir;
-#endif  // !defined(OS_NACL) && !defined(OS_ANDROID)
+#endif  // !defined(OS_ANDROID)
   return srcdir;
 }
 

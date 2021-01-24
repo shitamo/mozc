@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@ def quality_regression_test(name, src, deps, **kwargs):
         ],
         data = [
             "//data_manager/android:mozc.data",
-            "//data_manager/chromeos:zipped_data_chromeos",
             "//data_manager/google:mozc.data",
             "//data_manager/oss:mozc.data",
             "//dictionary:pos_matcher_lib",

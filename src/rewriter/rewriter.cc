@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,7 @@ RewriterImpl::RewriterImpl(const ConverterInterface *parent_converter,
   AddRewriter(new ZipcodeRewriter(&pos_matcher_));
   AddRewriter(new DiceRewriter);
 
-  if (FLAGS_use_history_rewriter) {
+  if (mozc::GetFlag(FLAGS_use_history_rewriter)) {
     AddRewriter(new UserBoundaryHistoryRewriter(parent_converter));
     AddRewriter(new UserSegmentHistoryRewriter(&pos_matcher_, pos_group));
   }

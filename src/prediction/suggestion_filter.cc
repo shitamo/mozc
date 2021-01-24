@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ SuggestionFilter::SuggestionFilter(const char *data, size_t size) {
 SuggestionFilter::~SuggestionFilter() {}
 
 bool SuggestionFilter::IsBadSuggestion(const std::string &text) const {
-  if (filter_.get() == nullptr) {
+  if (filter_ == nullptr) {
     return false;
   }
   std::string lower_text = text;

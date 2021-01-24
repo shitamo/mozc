@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,7 @@ std::vector<KeyInformation> ExtractSortedDirectModeKeysFromStream(
 std::vector<KeyInformation> ExtractSortedDirectModeKeysFromFile(
     const std::string &filename) {
   std::unique_ptr<std::istream> ifs(ConfigFileStream::LegacyOpen(filename));
-  if (ifs.get() == nullptr) {
+  if (ifs == nullptr) {
     DLOG(FATAL) << "could not open file: " << filename;
     return std::vector<KeyInformation>();
   }

@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include "protocol/config.pb.h"
 #include "request/conversion_request.h"
 #include "rewriter/rewriter_interface.h"
+#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 
 namespace mozc {
@@ -219,8 +220,8 @@ std::unique_ptr<EmoticonRewriter> EmoticonRewriter::CreateFromDataManager(
     const DataManagerInterface &data_manager) {
   absl::string_view token_array_data, string_array_data;
   data_manager.GetEmoticonRewriterData(&token_array_data, &string_array_data);
-  return std::unique_ptr<EmoticonRewriter>(
-      new EmoticonRewriter(token_array_data, string_array_data));
+  return absl::make_unique<EmoticonRewriter>(token_array_data,
+                                             string_array_data);
 }
 
 EmoticonRewriter::EmoticonRewriter(absl::string_view token_array_data,

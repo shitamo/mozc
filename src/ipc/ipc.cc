@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #include "base/singleton.h"
 #include "base/thread.h"
 #include "ipc/ipc_path_manager.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 
@@ -69,7 +70,7 @@ class IPCServerThread : public Thread {
 
 void IPCServer::LoopAndReturn() {
   if (server_thread_ == nullptr) {
-    server_thread_.reset(new IPCServerThread(this));
+    server_thread_ = absl::make_unique<IPCServerThread>(this);
     server_thread_->SetJoinable(true);
     server_thread_->Start("IPCServer");
   } else {

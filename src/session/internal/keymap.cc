@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -167,7 +167,7 @@ const char *KeyMapManager::GetKeyMapFileName(
 
 bool KeyMapManager::LoadFile(const char *filename) {
   std::unique_ptr<std::istream> ifs(ConfigFileStream::LegacyOpen(filename));
-  if (ifs.get() == nullptr) {
+  if (ifs == nullptr) {
     LOG(WARNING) << "cannot load keymap table: " << filename;
     return false;
   }

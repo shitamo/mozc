@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include "request/conversion_request.h"
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 namespace {
@@ -82,7 +83,8 @@ class CollocationRewriterTest : public ::testing::Test {
 
     const mozc::testing::MockDataManager data_manager;
     pos_matcher_.Set(data_manager.GetPOSMatcherData());
-    collocation_rewriter_.reset(new CollocationRewriter(&data_manager));
+    collocation_rewriter_ =
+        absl::make_unique<CollocationRewriter>(&data_manager);
   }
 
   // Makes a segment from SegmentData.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,17 +31,31 @@
 # Visibility:  please choose a more appropriate default for the package,
 # and update any rules that should be different.
 
-load("//:build_defs.bzl", "cc_binary_mozc")
+load(
+    "//:build_defs.bzl",
+    "BRANDING",
+    "MACOS_BUNDLE_ID_PREFIX",
+    "MACOS_MIN_OS_VER",
+    "cc_binary_mozc",
+    "cc_library_mozc",
+)
+load("@build_bazel_rules_apple//apple:macos.bzl", "macos_application")
 
 package(default_visibility = ["//:__subpackages__"])
 
-# -*- mode: python; -*-
 cc_binary_mozc(
     name = "mozc_server",
+    deps = [":mozc_server_lib"],
+)
+
+cc_library_mozc(
+    name = "mozc_server_lib",
     srcs = [
         "mozc_server.cc",
-        "mozc_server.h",
         "mozc_server_main.cc",
+    ],
+    hdrs = [
+        "mozc_server.h",
     ],
     copts = ["$(STACK_FRAME_UNLIMITED)"],  # mozc_server.cc
     deps = [
@@ -56,7 +70,6 @@ cc_binary_mozc(
         "//base:singleton",
         "//base:system_util",
         "//base:util",
-        "//base:winmain",
         "//config:stats_config_util",
         "//session",
         "//session:session_server",
@@ -81,4 +94,33 @@ cc_binary_mozc(
         "//session:session_usage_observer",
         "@com_google_absl//absl/flags:flag",
     ],
+)
+
+genrule(
+    name = "gen_mozc_server_info_plist",
+    srcs = [
+        "//base:mozc_version_txt",
+        "//data/mac:mozc_server_info",
+    ],
+    outs = ["mozc_server_info.plist"],
+    cmd = ("$(location //build_tools:tweak_info_plist)" +
+           " --output $@" +
+           " --input $(location //data/mac:mozc_server_info)" +
+           " --version_file $(location //base:mozc_version_txt)" +
+           " --branding " + BRANDING),
+    exec_tools = ["//build_tools:tweak_info_plist"],
+)
+
+macos_application(
+    name = "mozc_server_macos",
+    app_icons = ["//data/images/mac:product_icon.icns"],
+    bundle_id = MACOS_BUNDLE_ID_PREFIX + ".Converter",
+    bundle_name = BRANDING + "Converter",
+    infoplists = [":gen_mozc_server_info_plist"],
+    minimum_os_version = MACOS_MIN_OS_VER,
+    deps = [":mozc_server_lib"],
+    # When we support Breakpad, uncomment the following block.
+    # additional_contents = {
+    #     "[Breakpad]" : "Frameworks",
+    # },
 )

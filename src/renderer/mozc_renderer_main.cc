@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
   // restricted mode
   if (run_level == mozc::RunLevel::RESTRICTED) {
-    FLAGS_restricted = true;
+    mozc::SetFlag(&FLAGS_restricted, true);
   }
 
   if (mozc::config::StatsConfigUtil::IsEnabled()) {

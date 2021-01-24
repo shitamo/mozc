@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,10 +39,6 @@ package(default_visibility = [
     "//:__subpackages__",
 ])
 
-test_suite(
-    name = "nacl_test",
-)
-
 cc_library_mozc(
     name = "config_handler",
     srcs = ["config_handler.cc"],
@@ -80,6 +76,7 @@ cc_test_mozc(
         "//protocol:config_proto",
         "//testing:gunit_main",
         "//testing:mozctest",
+        "@com_google_absl//absl/memory",
     ],
 )
 
@@ -140,6 +137,7 @@ cc_library_mozc(
         "//base:util",
         "//protocol:config_proto",
         "//storage:lru_storage",
+        "@com_google_absl//absl/memory",
     ],
 )
 

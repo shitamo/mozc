@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ namespace storage {
 class StorageInterface {
  public:
   // Binds |filename| to the storage but the interpretation of the
-  // |filename| depends on the implementaion. implementations can
+  // |filename| depends on the implementation. implementations can
   // - ignore the specified |filename|.
   // - load the existing data from |filename|.
   // - return true if the specified |filename| does not exist.

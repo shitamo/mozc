@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -188,7 +188,7 @@ class UserDictionaryTest : public ::testing::Test {
   UserDictionaryTest() { convreq_.set_config(&config_); }
 
   void SetUp() override {
-    suppression_dictionary_.reset(new SuppressionDictionary);
+    suppression_dictionary_ = absl::make_unique<SuppressionDictionary>();
 
     mozc::usage_stats::UsageStats::ClearAllStatsForTest();
     config::ConfigHandler::GetDefaultConfig(&config_);
@@ -537,8 +537,7 @@ TEST_F(UserDictionaryTest, TestLookupExactWithSuggestionOnlyWords) {
       mock_data_manager.GetPOSMatcherData());
   const uint16 kNounId = pos_matcher.GetGeneralNounId();
   const Entry kExpected1[] = {{"key", "noun", kNounId, kNounId}};
-  TestLookupExactHelper(kExpected1, arraysize(kExpected1), "key", 3,
-                        *user_dic.get());
+  TestLookupExactHelper(kExpected1, arraysize(kExpected1), "key", 3, *user_dic);
 }
 
 TEST_F(UserDictionaryTest, IncognitoModeTest) {

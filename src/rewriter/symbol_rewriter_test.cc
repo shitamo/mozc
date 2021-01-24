@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include "session/request_test_util.h"
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 
@@ -109,7 +110,7 @@ class SymbolRewriterTest : public ::testing::Test {
     engine_.reset(MockDataEngineFactory::Create());
     converter_ = engine_->GetConverter();
 
-    data_manager_.reset(new testing::MockDataManager);
+    data_manager_ = absl::make_unique<testing::MockDataManager>();
   }
 
   std::unique_ptr<EngineInterface> engine_;

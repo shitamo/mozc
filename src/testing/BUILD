@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ package(
 
 alias(
     name = "testing",
-    actual = "gunit",
+    actual = "gunit_main",
 )
 
 genrule(
@@ -82,31 +82,7 @@ cc_library_mozc(
         client = [
             "//base:init_mozc",
         ],
-        nacl = [
-            "//testing:nacl_mock_module",
-            "//base:init_mozc",
-        ],
     ),
-)
-
-cc_library_mozc(
-    name = "nacl_mock_module",
-    testonly = 1,
-    srcs = ["base/public/nacl_mock_module.cc"],
-    hdrs = ["base/public/nacl_mock_module.h"],
-    deps = select_mozc(
-        nacl = [
-            ":gunit",
-            "//base",
-            "//base:init_mozc",
-            "//base:nacl_linkopts",
-            "//net:http_client",
-        ],
-    ) + [
-        "//base:logging",
-        "//base:port",
-    ],
-    alwayslink = 1,
 )
 
 cc_library_mozc(
@@ -117,7 +93,10 @@ cc_library_mozc(
         "base/public/googletest.h",
         "base/public/gunit.h",
     ],
-    deps = [":gunit"] + select_mozc(
+    deps = [
+        ":gunit",
+        ":googletest",
+    ] + select_mozc(
         client = [":gunit_main_internal"],
         default = ["//testing/base/public:gunit_main"],
     ),
@@ -147,14 +126,27 @@ cc_library_mozc(
 cc_library_mozc(
     name = "gunit",
     testonly = 1,
+    srcs = [],
+    hdrs = [
+        "base/public/gmock.h",
+        "base/public/gunit.h",
+    ],
+    deps = select_mozc(
+        default = ["//testing/base/public:gunit_for_library_testonly"],
+        ios = ["//testing/base/public:gunit_for_library_testonly"],
+        oss = ["@gtest//:gtest"],
+    ) + [":googletest"],
+)
+
+cc_library_mozc(
+    name = "googletest",
+    testonly = 1,
     srcs = select_mozc(
         client = ["base/internal/googletest.cc"],
         default = [],
     ),
     hdrs = [
-        "base/public/gmock.h",
         "base/public/googletest.h",
-        "base/public/gunit.h",
     ],
     deps = select_mozc(
         client = [
@@ -166,15 +158,6 @@ cc_library_mozc(
             "//base:util",
         ],
         default = ["//testing/base/public:gunit_for_library_testonly"],
-        oss = [
-            "@gtest//:gtest",
-            ":mozc_data_dir_header",
-            "//base",
-            "//base:logging",
-            "//base:file_util",
-            "//base:flags",
-            "//base:util",
-        ],
     ),
 )
 
@@ -187,7 +170,7 @@ cc_library_mozc(
         "//:__subpackages__",
     ],
     deps = [
-        ":gunit",
+        ":googletest",
         "//base",
         "//base:file_util",
         "//base:logging",

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,13 +39,7 @@ load(
 )
 load("//tools/build_defs:stubs.bzl", "portable_proto_library")
 
-package(default_visibility = [
-    "//:__subpackages__",
-])
-
-test_suite(
-    name = "nacl_test",
-)
+package(default_visibility = ["//:__subpackages__"])
 
 portable_proto_library(
     name = "usage_stats_proto",

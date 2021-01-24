@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -64,10 +64,23 @@ config_setting(
 )
 
 config_setting(
-    name = "nacl",
+    name = "darwin",
     values = {
-        "define": "TARGET=nacl",
-        # "cc_target_os": "nacl",
+        "define": "TARGET=macos",
+    },
+)
+
+config_setting(
+    name = "oss_macos",
+    values = {
+        "define": "TARGET=oss_macos",
+    },
+)
+
+config_setting(
+    name = "chromiumos",
+    values = {
+        "define": "TARGET=chromiumos",
     },
 )
 

@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -684,11 +684,11 @@ TEST(StatsConfigUtilTestAndroid, DefaultValueTest) {
 }
 #endif  // OS_ANDROID
 
-#if defined(OS_LINUX) || defined(OS_NACL)
+#if defined(OS_LINUX)
 TEST(StatsConfigUtilTestLinux, DefaultValueTest) {
   EXPECT_FALSE(StatsConfigUtil::IsEnabled());
 }
-#endif  // OS_LINUX || OS_NACL
+#endif  // OS_LINUX
 
 #else  // !GOOGLE_JAPANESE_INPUT_BUILD
 TEST(StatsConfigUtilTestNonOfficialBuild, DefaultValueTest) {

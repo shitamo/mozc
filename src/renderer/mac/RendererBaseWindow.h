@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
 #define MOZC_RENDERER_MAC_RENDERER_BASE_WINDOW_H_
 
 #include <Cocoa/Cocoa.h>
+
+#include "base/port.h"
 
 namespace mozc {
 namespace renderer {

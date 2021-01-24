@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,7 @@
 #include "base/mozc_hash_set.h"
 #include "base/port.h"
 #include "base/util.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 namespace storage {
@@ -323,7 +324,7 @@ bool LRUStorage::OpenOrCreate(const char *filename, size_t new_value_size,
 }
 
 bool LRUStorage::Open(const char *filename) {
-  mmap_.reset(new Mmap);
+  mmap_ = absl::make_unique<Mmap>();
 
   if (!mmap_) {
     LOG(ERROR) << "cannot make Mmap object";

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2010-2020, Google Inc.
+# Copyright 2010-2021, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,11 +65,11 @@ TARGET_PLATFORM_TO_DIGIT = {
     'Mac': '1',
     'Linux': '2',
     'Android': '3',
-    'NaCl': '4',
+    'ChromeOS': '4',
     'iOS': '6',
     'iOS_sim': '6',
     'Wasm': '7',
-    }
+}
 
 VERSION_PROPERTIES = [
     'MAJOR',

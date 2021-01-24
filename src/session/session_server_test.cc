@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 
+#include "base/flags.h"
 #include "base/scheduler.h"
 #include "base/system_util.h"
 #include "testing/base/public/googletest.h"
@@ -67,7 +68,7 @@ class JobRecorder : public Scheduler::SchedulerInterface {
 class SessionServerTest : public testing::Test {
  protected:
   void SetUp() override {
-    SystemUtil::SetUserProfileDirectory(FLAGS_test_tmpdir);
+    SystemUtil::SetUserProfileDirectory(mozc::GetFlag(FLAGS_test_tmpdir));
   }
 };
 

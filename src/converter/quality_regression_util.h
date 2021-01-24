@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,6 @@ class QualityRegressionUtil {
     OSS = 2,
     MOBILE = 4,
     MOBILE_AMBIGUOUS = 8,
-    CHROMEOS = 16,
   };
 
   struct TestItem {

@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,14 @@
 #include "base/clock.h"
 #include "base/clock_mock.h"
 #include "testing/base/public/gunit.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 
 class StopwatchTest : public testing::Test {
  protected:
   void SetUp() override {
-    clock_mock_.reset(new ClockMock(0, 0));
+    clock_mock_ = absl::make_unique<ClockMock>(0, 0);
     // 1GHz (Accuracy = 1ns)
     clock_mock_->SetFrequency(uint64{1000000000});
     Clock::SetClockForUnitTest(clock_mock_.get());

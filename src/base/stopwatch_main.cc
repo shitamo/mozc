@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
   mozc::Stopwatch stopwatch;
   stopwatch.Start();
-  mozc::Util::Sleep(FLAGS_sleep_time);
+  mozc::Util::Sleep(mozc::GetFlag(FLAGS_sleep_time));
   stopwatch.Stop();
   std::cout << stopwatch.GetElapsedMicroseconds() << std::endl;
 

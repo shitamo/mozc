@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -284,7 +284,17 @@ std::string UserProfileDirectoryImpl::GetUserProfileDirectory() const {
   //    use "$HOME/.config/mozc" as the default value of $XDG_CONFIG_HOME
   // https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
   const char *home = Environ::GetEnv("HOME");
-  CHECK(home) << "$HOME was not defined.";
+  if (home == nullptr) {
+    char buf[1024];
+    struct passwd pw, *ppw;
+    const uid_t uid = geteuid();
+    CHECK_EQ(0, getpwuid_r(uid, &pw, buf, sizeof(buf), &ppw))
+        << "Can't get passwd entry for uid " << uid << ".";
+    CHECK_LT(0, strlen(pw.pw_dir))
+        << "Home directory for uid " << uid << " is not set.";
+    return FileUtil::JoinPath(pw.pw_dir, ".mozc");
+  }
+
   const std::string old_dir = FileUtil::JoinPath(home, ".mozc");
   if (FileUtil::DirectoryExists(old_dir)) {
     return old_dir;
@@ -412,14 +422,13 @@ std::string SystemUtil::GetServerDirectory() {
   return MacUtil::GetServerDirectory();
 #endif  // __APPLE__
 
-#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_NACL) || \
-    defined(OS_WASM)
+#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_WASM)
 # if defined(MOZC_SERVER_DIRECTORY)
   return MOZC_SERVER_DIRECTORY;
 # else
   return "/usr/lib/mozc";
 # endif  // MOZC_SERVER_DIRECTORY
-#endif  // OS_LINUX || OS_ANDROID || OS_NACL || OS_WASM
+#endif   // OS_LINUX || OS_ANDROID || OS_WASM
 
   // If none of the above platforms is specified, the compiler raises an error
   // because of no return value.
@@ -653,14 +662,13 @@ string GetSessionIdString() {
 #endif  // OS_WIN
 
 std::string SystemUtil::GetDesktopNameAsString() {
-#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_NACL) || \
-    defined(OS_WASM)
+#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_WASM)
   const char *display = Environ::GetEnv("DISPLAY");
   if (display == nullptr) {
     return "";
   }
   return display;
-#endif  // OS_LINUX || OS_ANDROID || OS_NACL || OS_WASM
+#endif  // OS_LINUX || OS_ANDROID || OS_WASM
 
 #if defined(__APPLE__)
   return "";
@@ -851,7 +859,7 @@ std::string SystemUtil::GetOSVersionString() {
   const string ret = "MacOSX " + MacUtil::GetOSVersionString();
   // TODO(toshiyuki): get more specific info
   return ret;
-#elif defined(OS_LINUX) || defined(OS_NACL)
+#elif defined(OS_LINUX)
   const std::string ret = "Linux";
   return ret;
 #else   // !OS_WIN && !__APPLE__ && !OS_LINUX
@@ -893,8 +901,7 @@ uint64 SystemUtil::GetTotalPhysicalMemory() {
   return total_memory;
 #endif  // __APPLE__
 
-#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_NACL) || \
-    defined(OS_WASM)
+#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_WASM)
 # if defined(_SC_PAGESIZE) && defined(_SC_PHYS_PAGES)
   const int32 page_size = sysconf(_SC_PAGESIZE);
   const int32 number_of_phyisical_pages = sysconf(_SC_PHYS_PAGES);
@@ -907,7 +914,7 @@ uint64 SystemUtil::GetTotalPhysicalMemory() {
 # else   // defined(_SC_PAGESIZE) && defined(_SC_PHYS_PAGES)
   return 0;
 # endif  // defined(_SC_PAGESIZE) && defined(_SC_PHYS_PAGES)
-#endif  // OS_LINUX || OS_ANDROID || OS_NACL || OS_WASM
+#endif   // OS_LINUX || OS_ANDROID || OS_WASM
 
   // If none of the above platforms is specified, the compiler raises an error
   // because of no return value.

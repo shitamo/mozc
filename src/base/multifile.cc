@@ -1,4 +1,4 @@
-// Copyright 2010-2020, Google Inc.
+// Copyright 2010-2021, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 
 #include "base/logging.h"
 #include "base/util.h"
+#include "absl/memory/memory.h"
 
 namespace mozc {
 
@@ -63,7 +64,7 @@ bool InputMultiFile::ReadLine(std::string *line) {
 bool InputMultiFile::OpenNext() {
   while (next_iter_ != filenames_.end()) {
     const char *filename = next_iter_->c_str();
-    ifs_.reset(new InputFileStream(filename, mode_));
+    ifs_ = absl::make_unique<InputFileStream>(filename, mode_);
     ++next_iter_;
     if (!ifs_->fail()) {
       return true;
