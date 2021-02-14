@@ -46,7 +46,7 @@ def SerializeToFile(strings, filename):
     filename: Output binary file.
   """
   array_size = len(strings)
-  str_data = io.StringIO()
+  str_data = io.BytesIO()
 
   # Precompute offsets and lengths.
   offsets = []
