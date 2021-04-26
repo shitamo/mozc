@@ -454,7 +454,6 @@ cc_library_mozc(
     hdrs = ["converter.h"],
     visibility = [
         "//engine:__pkg__",
-        "//evaluation/simulator:__pkg__",
         "//rewriter:__pkg__",
         "//session:__pkg__",
     ],
@@ -665,7 +664,6 @@ py_library_mozc(
     name = "gen_segmenter_code_lib",
     srcs = ["gen_segmenter_code.py"],
     visibility = ["//visibility:private"],
-    deps = [],
 )
 
 py_binary_mozc(
