@@ -35,11 +35,7 @@
 // Mozc basically disables C++ exception.
 #define JSON_USE_EXCEPTION 0
 #endif  // !JSON_USE_EXCEPTION
-#ifdef MOZC_USE_SYSTEM_JSONCPP
-#include <json/json.h>
-#else
 #include "third_party/jsoncpp/include/json/json.h"
-#endif
 #define MOZC_JSONCPP_JSON_H_INCLUDED
 #endif  // !MOZC_JSONCPP_JSON_H_INCLUDED
 
