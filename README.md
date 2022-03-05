@@ -13,7 +13,7 @@ Build Status
 
 | Linux | Windows | macOS | Android lib |
 |:-----:|:-------:|:-----:|:-----------:|
-| [![Linux](https://github.com/shitamo/mozc/actions/workflows/linux.yaml/badge.svg)](https://github.com/shitamo/mozc/actions/workflows/linux.yaml) | [![Windows](https://github.com/shitamo/mozc/actions/workflows/windows.yaml/badge.svg)](https://github.com/shitamo/mozc/actions/workflows/windows.yaml) | [![macOS](https://github.com/shitamo/mozc/actions/workflows/macos.yaml/badge.svg)](https://github.com/shitamo/mozc/actions/workflows/macos.yaml) | [![Android lib](https://github.com/shitamo/mozc/actions/workflows/android.yaml/badge.svg)](https://github.com/shitamo/mozc/actions/workflows/android.yaml) |
+| [![Linux](../../actions/workflows/linux.yaml/badge.svg)](../../actions/workflows/linux.yaml) | [![Windows](../../actions/workflows/windows.yaml/badge.svg)](../../actions/workflows/windows.yaml) | [![macOS](../../actions/workflows/macos.yaml/badge.svg)](../../actions/workflows/macos.yaml) | [![Android lib](../../actions/workflows/android.yaml/badge.svg)](../../actions/workflows/android.yaml) |
 
 What's Mozc?
 ------------
