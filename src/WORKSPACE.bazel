@@ -13,10 +13,10 @@ load("//:config.bzl", "MACOS_QT_PATH")
 # If native.android_ndk_repository is called directly,
 # Android NDK should be available in the build environment.
 # https://github.com/bazelbuild/bazel/issues/14260
-load("//:android_repository.bzl", "android_repository")
-android_repository(name = "android_repository")
-load("@android_repository//:setup.bzl", "android_ndk_setup")
-android_ndk_setup()
+#load("//:android_repository.bzl", "android_repository")
+#android_repository(name = "android_repository")
+#load("@android_repository//:setup.bzl", "android_ndk_setup")
+#android_ndk_setup()
 
 local_repository(
     name = "com_google_absl",
@@ -65,6 +65,30 @@ pkg_config_repository(
 pkg_config_repository(
   name = "ibus",
   packages = ["glib-2.0", "gobject-2.0", "ibus-1.0"],
+)
+
+# uim
+new_local_repository(
+    name = "uim",
+    # This path should be updated per the environment.
+    path = "/usr",  # For Debian
+    build_file = "BUILD.uim.bazel",
+)
+
+# Fcitx
+new_local_repository(
+    name = "fcitx",
+    # This path should be updated per the environment.
+    path = "/usr",  # For Debian
+    build_file = "BUILD.fcitx.bazel",
+)
+
+# Fcitx 5
+new_local_repository(
+    name = "fcitx5",
+    # This path should be updated per the environment.
+    path = "/usr",  # For Debian
+    build_file = "BUILD.fcitx5.bazel",
 )
 
 # Japanese Usage Dictionary

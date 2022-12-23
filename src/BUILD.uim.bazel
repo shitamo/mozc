@@ -1,0 +1,25 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+# This rule is created from pkg-config
+#
+# packages="uim"
+# copts, hdrs, indludes: pkg-config --cflags $packages
+# linkopts: pkg-config --libs-only-l $packages
+#
+# The default settings are for the supported Docker environment (Ubuntu 20.04).
+
+cc_library(
+    name = "uim",
+    hdrs = glob([
+        "include/uim/**",
+    ]),
+    includes = [
+        "include/uim",
+    ],
+    linkopts = [
+        "-luim-scm",
+        "-luim",
+    ],
+)
