@@ -570,10 +570,7 @@ message DecoderExperimentParams {
   // Otherwise, use the default penalty 1700.
   optional int32 spatial_cost_penalty_min_char_length = 6 [default = 0];
 
-  // If true, increase the number of partial candidates.
-  // Prefix lookup results will be included to the result of
-  // the dictionary predictor.
-  optional bool enrich_partial_candidates = 7 [default = false];
+  reserved 7;  // Deprecated enrich_partial_candidates
 
   enum VariationCharacterType {
     NO_VARIATION = 0;
@@ -586,13 +583,9 @@ message DecoderExperimentParams {
   // Bitmap of enabled variation character types.
   optional uint32 variation_character_types = 8 [default = 0];
 
-  // Enable number decoder for prediction.
-  optional bool enable_number_decoder = 9 [default = false];
+  reserved 9;  // Deprecated enable_number_decoder
 
-  // If true, we do not add the segment model penalty on calculating
-  // prediction candidate cost.
-  optional bool cancel_segment_model_penalty_for_prediction = 10
-      [default = false];
+  reserved 10;  // Deprecated cancel_segment_model_penalty_for_prediction
 
   // If true, EnvironmentalFilterRewriter avoids suggesting some unrenderable
   // letters.
@@ -1211,17 +1204,28 @@ message Status {
 
 // This message contains which characters are to be deleted by client.
 // E.g. if current composition and surrounding text are
-//     "この感じは漢字は"
-//                ^^^^^^
+//     "この感じは[漢字は]" ("漢字は" is the composition)
 // and we send DeletionRange with offset == -3 and length == 3, then they will
 // be rendered like:
-//     "この漢字は"
-//          ^^^^^^
+//     "この[漢字は]"
 message DeletionRange {
-  // Offset of start of range.
+  // Offset of start of the deletion range.
+  // Right now,
+  // - Only nagative value is expected.
+  //     In this case, the offset is counted from the beginning of the
+  //     composition (see the message comment right above).
+  // - Positive or 0 value is not sent.
+  //     But not forbidden.
+  //     Though its expectation is not decided yet,
+  //     the client implementation should be prepared (at least, don't crash).
   optional int32 offset = 1;
 
   // Length of the range.
+  // Right now offset==abs(length) is expected.
+  // The expectation where the above condition doesn't meet
+  // is not defined yet.
+  // This may be defined in future (when positive offset becomes
+  // supported?).
   optional int32 length = 2;
 }
 
