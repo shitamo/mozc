@@ -31,6 +31,7 @@
 #define MOZC_UNIX_FCITX_FCITX_MOZC_H_
 
 #include <fcitx-utils/key.h>
+#include <fcitx/event.h>
 #include <fcitx/inputcontextproperty.h>
 #include <fcitx/text.h>
 
@@ -54,6 +55,7 @@ class MozcState : public InputContextProperty {
   // This constructor is used by unittests.
   MozcState(InputContext *ic, mozc::client::ClientInterface *client,
             MozcEngine *engine);
+  MozcState(const MozcState &) = delete;
   virtual ~MozcState();
 
   void UpdatePreeditMethod();
@@ -63,7 +65,7 @@ class MozcState : public InputContextProperty {
   void SelectCandidate(int idx);
   void Reset();
   void FocusIn();
-  void FocusOut();
+  void FocusOut(const InputContextEvent &event);
   bool Paging(bool prev);
 
   // Functions called by the MozcResponseParser class to update UI.
@@ -160,8 +162,6 @@ class MozcState : public InputContextProperty {
   std::string url_;  // URL to be opened by a browser.
   std::string description_;
   std::string title_;
-
-  DISALLOW_COPY_AND_ASSIGN(MozcState);
 };
 
 }  // namespace fcitx

@@ -90,7 +90,7 @@ const struct CompositionModeInfo {
         mozc::commands::HALF_KATAKANA,
     },
 };
-const size_t kNumCompositionModes = arraysize(kPropCompositionModes);
+const size_t kNumCompositionModes = FCITX_ARRAY_SIZE(kPropCompositionModes);
 
 MozcModeSubAction::MozcModeSubAction(MozcEngine *engine,
                                      mozc::commands::CompositionMode mode)
@@ -150,6 +150,20 @@ MozcEngine::MozcEngine(Instance *instance)
         kPropCompositionModes[i].name, modeAction.get());
     toolMenu_.addAction(modeAction.get());
     i++;
+  }
+
+  separatorAction_.setSeparator(true);
+  instance_->userInterfaceManager().registerAction("mozc-separator",
+                                                   &separatorAction_);
+
+  SemanticVersion version;
+  version.setMajor(5);
+  version.setMinor(0);
+  version.setPatch(22);
+  // Where we fix the support for separator
+  if (auto fcitxVersion = SemanticVersion::parse(Instance::version());
+      fcitxVersion && *fcitxVersion >= version) {
+    toolMenu_.addAction(&separatorAction_);
   }
 
   instance_->userInterfaceManager().registerAction("mozc-tool-config",
@@ -213,8 +227,10 @@ void MozcEngine::activate(const fcitx::InputMethodEntry &,
 void MozcEngine::deactivate(const fcitx::InputMethodEntry &,
                             fcitx::InputContextEvent &event) {
   auto ic = event.inputContext();
+  deactivating_ = true;
   auto mozc_state = mozcState(ic);
-  mozc_state->FocusOut();
+  mozc_state->FocusOut(event);
+  deactivating_ = false;
 }
 void MozcEngine::keyEvent(const InputMethodEntry &entry, KeyEvent &event) {
   auto mozc_state = mozcState(event.inputContext());
