@@ -49,6 +49,8 @@ namespace uim {
 class KeyTranslator {
  public:
   KeyTranslator();
+  KeyTranslator(const KeyTranslator &) = delete;
+  KeyTranslator &operator=(const KeyTranslator &) = delete;
   virtual ~KeyTranslator();
 
   // Converts ibus keycode to Mozc key code and stores them on |out_event|.
@@ -101,8 +103,6 @@ class KeyTranslator {
   // 'Hiragana Letter Small U' (with Shift modifier).
   KanaMap kana_map_jp_;  // mapping for JP keyboard.
   KanaMap kana_map_us_;  // mapping for US keyboard.
-
-  DISALLOW_COPY_AND_ASSIGN(KeyTranslator);
 };
 
 }  // namespace uim
