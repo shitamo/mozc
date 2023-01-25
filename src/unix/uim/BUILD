@@ -1,12 +1,12 @@
 load(
     "//:build_defs.bzl",
     "cc_binary_mozc",
-    "cc_library_mozc",
+    "mozc_cc_library",
 )
 
 package(default_visibility = ["//:__subpackages__"])
 
-cc_library_mozc(
+mozc_cc_library(
     name = "uim_key_translator",
     srcs = [
         "key_translator.cc",
