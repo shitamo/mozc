@@ -1,6 +1,6 @@
 load(
     "//:build_defs.bzl",
-    "cc_binary_mozc",
+    "mozc_cc_binary",
     "mozc_cc_library",
 )
 
@@ -24,7 +24,7 @@ mozc_cc_library(
     ],
 )
 
-cc_binary_mozc(
+mozc_cc_binary(
     name = "libuim-mozc.so",
     srcs = ["mozc.cc"],
     deps = [
