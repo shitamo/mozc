@@ -1,6 +1,6 @@
 load(
     "//:build_defs.bzl",
-    "mozc_cc_binary",
+    "cc_binary_mozc",
     "mozc_cc_library",
 )
 
@@ -16,7 +16,6 @@ mozc_cc_library(
         "//base:port",
         "//base:util",
         "//client:client",
-        "//session:ime_switch_util",
         "//protocol:commands_cc_proto",
     ]
 )
@@ -87,7 +86,7 @@ mozc_cc_library(
     ],
 )
 
-mozc_cc_binary(
+cc_binary_mozc(
     name = "fcitx5-mozc.so",
     srcs = [
         "mozc_engine_factory.cc"
