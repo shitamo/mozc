@@ -1,6 +1,6 @@
 load(
     "//:build_defs.bzl",
-    "cc_binary_mozc",
+    "mozc_cc_binary",
     "mozc_cc_library",
 )
 
@@ -34,7 +34,6 @@ mozc_cc_library(
         ":mozc_connection",
         ":fcitx_key_util",
         ":surrounding_text_util",
-        "//base:base",
         "//base:port",
         "//base:process",
         "//base:run_level",
@@ -79,7 +78,7 @@ mozc_cc_library(
     ],
 )
 
-cc_binary_mozc(
+mozc_cc_binary(
     name = "fcitx-mozc.so",
     srcs = ["eim.cc"],
     deps = [
