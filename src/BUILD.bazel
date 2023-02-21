@@ -144,29 +144,8 @@ filegroup(
     name = "package",
     srcs = mozc_select(
         default = [],
-        linux = [
-            "//gui/tool:mozc_tool",
-            "//renderer:mozc_renderer",
-            "//server:mozc_server",
-            "//unix/emacs:mozc_emacs_helper",
-            "//unix/ibus:ibus_mozc",
-            "//unix:icons",
-        ],
-        macos = [
-            "//mac:activate_pane",
-            "//mac:dev_confirm_pane",
-            "//mac:mozc_macos",
-            "//mac:uninstaller_macos",
-        ],
+        linux = ["//unix:package"],
+        macos = ["//mac:package"],
         oss_android = ["//android/jni:mozc_lib"],
-        oss_linux = [
-            "//gui/tool:mozc_tool",
-            "//renderer:mozc_renderer",
-            "//server:mozc_server",
-            "//unix/emacs:mozc_emacs_helper",
-            "//unix/ibus:ibus_mozc",
-            "//unix:icons",
-        ],
-        oss_macos = ["//mac:installer_oss_macos"],
     ),
 )
