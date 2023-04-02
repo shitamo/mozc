@@ -13,7 +13,7 @@ Build Status
 
 | Linux | Windows | macOS | Android lib |
 |:-----:|:-------:|:-----:|:-----------:|
-| [![Linux](../../actions/workflows/linux.yaml/badge.svg)](../../actions/workflows/linux.yaml) | [![Windows](../../actions/workflows/windows.yaml/badge.svg)](../../actions/workflows/windows.yaml) | [![macOS](../../actions/workflows/macos.yaml/badge.svg)](../../actions/workflows/macos.yaml) | [![Android lib](../../actions/workflows/android.yaml/badge.svg)](../../actions/workflows/android.yaml) |
+| [![Linux](../../actions/workflows/linux.yaml/badge.svg?branch=master)](../../actions/workflows/linux.yaml) | [![Windows](../../actions/workflows/windows.yaml/badge.svg?branch=master)](../../actions/workflows/windows.yaml) | [![macOS](../../actions/workflows/macos.yaml/badge.svg?branch=master)](../../actions/workflows/macos.yaml) | [![Android lib](../../actions/workflows/android.yaml/badge.svg?branch=master)](../../actions/workflows/android.yaml) |
 
 What's Mozc?
 ------------
