@@ -109,7 +109,6 @@ mozc_cc_library(
         ":tip_dll_module",
         ":tip_ref_count",
         ":tip_text_service",
-        "//base:port",
     ],
 )
 
@@ -127,7 +126,6 @@ mozc_cc_library(
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
     deps = [
-        ":tip_class_factory",
         ":tip_composition_util",
         ":tip_display_attributes",
         ":tip_dll_module",
@@ -148,15 +146,10 @@ mozc_cc_library(
         "//base:const",
         "//base:file_util",
         "//base:logging",
-        "//base:port",
         "//base:process",
         "//base:system_util",
         "//base:update_util",
-        "//base:util",
         "//protocol:commands_cc_proto",
-        "//win32/base:conversion_mode_util",
-        "//win32/base:indicator_visibility_tracker",
-        "//win32/base:input_state",
         "//win32/base:win32_window_util",
     ],
 )
@@ -224,10 +217,7 @@ mozc_cc_library(
     hdrs = ["tip_candidate_list.h"],
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
-    deps = [
-        ":tip_ref_count",
-        "//base:util",
-    ],
+    deps = [":tip_ref_count"],
 )
 
 mozc_cc_library(
@@ -240,24 +230,20 @@ mozc_cc_library(
         ":tip_edit_session",
         ":tip_input_mode_manager",
         ":tip_private_context_h",
-        ":tip_ref_count",
         ":tip_status",
         ":tip_surrounding_text",
         ":tip_text_service",
         ":tip_thread_context",
         "//base:logging",
-        "//base:port",
-        "//base:util",
+        "//base/win32:wide_char",
         "//client:client_interface",
         "//protocol:commands_cc_proto",
         "//win32/base:conversion_mode_util",
         "//win32/base:deleter",
-        "//win32/base:indicator_visibility_tracker",
         "//win32/base:input_state",
         "//win32/base:keyboard",
         "//win32/base:keyevent_handler",
         "//win32/base:surrogate_pair_observer",
-        "//win32/base:win32_window_util",
     ],
 )
 
@@ -335,10 +321,7 @@ mozc_cc_library(
     hdrs = ["tip_preferred_touch_keyboard.h"],
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
-    deps = [
-        ":tip_ref_count",
-        "//base:port",
-    ],
+    deps = [":tip_ref_count"],
 )
 
 mozc_cc_library(
@@ -427,7 +410,6 @@ mozc_cc_library(
     deps = [
         ":tip_display_attributes",
         ":tip_ref_count",
-        "//base:port",
     ],
 )
 
@@ -437,7 +419,6 @@ mozc_cc_library(
     hdrs = ["tip_compartment_util.h"],
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
-    deps = ["//base:port"],
 )
 
 mozc_cc_library(
@@ -502,11 +483,9 @@ mozc_cc_library(
         ":tip_candidate_list",
         ":tip_edit_session",
         ":tip_query_provider",
-        ":tip_range_util",
         ":tip_ref_count",
         ":tip_surrounding_text",
         ":tip_text_service",
-        "//base:port",
     ],
 )
 
@@ -516,13 +495,7 @@ mozc_cc_library(
     hdrs = ["tip_status.h"],
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
-    deps = [
-        ":tip_compartment_util",
-        "//base:logging",
-        "//base:port",
-        "//protocol:commands_cc_proto",
-        "//win32/base:conversion_mode_util",
-    ],
+    deps = [":tip_compartment_util"],
 )
 
 mozc_cc_library(
@@ -530,7 +503,6 @@ mozc_cc_library(
     hdrs = ["tip_ui_handler.h"],
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
-    deps = ["//base:port"],
 )
 
 mozc_cc_library(
@@ -590,8 +562,6 @@ mozc_cc_library(
         ":tip_query_provider",
         ":tip_ref_count",
         ":tip_text_service",
-        "//base:port",
-        "//base:util",
     ],
 )
 
@@ -667,10 +637,9 @@ mozc_cc_library(
     tags = MOZC_TAGS.WIN_ONLY,
     target_compatible_with = ["@platforms//os:windows"],
     deps = [
-        "//base:port",
+        "//protocol:commands_cc_proto",
         "//win32/base:conversion_mode_util",
         "//win32/base:indicator_visibility_tracker",
-        "//win32/base:input_state",
         "//win32/base:keyboard",
     ],
 )
