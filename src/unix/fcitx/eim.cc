@@ -31,6 +31,7 @@
 #include <fcitx/ime.h>
 #include <fcitx/hook.h>
 #include <fcitx/module.h>
+#undef InvokeFunction
 #include <fcitx/keys.h>
 #include <fcitx-config/xdg.h>
 #include "fcitx_mozc.h"
