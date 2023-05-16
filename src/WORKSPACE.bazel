@@ -119,7 +119,7 @@ new_local_repository(
     name = "uim",
     # This path should be updated per the environment.
     path = "/usr",  # For Debian
-    build_file = "BUILD.uim.bazel",
+    build_file = "@//bazel:BUILD.uim.bazel",
 )
 
 # Fcitx
@@ -127,7 +127,7 @@ new_local_repository(
     name = "fcitx",
     # This path should be updated per the environment.
     path = "/usr",  # For Debian
-    build_file = "BUILD.fcitx.bazel",
+    build_file = "@//bazel:BUILD.fcitx.bazel",
 )
 
 # Fcitx 5
@@ -135,7 +135,7 @@ new_local_repository(
     name = "fcitx5",
     # This path should be updated per the environment.
     path = "/usr",  # For Debian
-    build_file = "BUILD.fcitx5.bazel",
+    build_file = "@//bazel:BUILD.fcitx5.bazel",
 )
 
 # Japanese Usage Dictionary
