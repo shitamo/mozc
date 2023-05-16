@@ -31,9 +31,12 @@
 #include <fcitx/ime.h>
 #include <fcitx/hook.h>
 #include <fcitx/module.h>
-#undef InvokeFunction
 #include <fcitx/keys.h>
 #include <fcitx-config/xdg.h>
+
+// Resolve macro naming conflict with absl.
+#undef InvokeFunction
+
 #include "fcitx_mozc.h"
 #include "mozc_connection.h"
 #include "mozc_response_parser.h"
