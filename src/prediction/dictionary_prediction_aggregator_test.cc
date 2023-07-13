@@ -87,10 +87,11 @@ class DictionaryPredictionAggregatorTestPeer {
       const dictionary::DictionaryInterface *suffix_dictionary,
       const dictionary::PosMatcher *pos_matcher,
       std::unique_ptr<PredictionAggregatorInterface>
-          single_kanji_prediction_aggregator)
+          single_kanji_prediction_aggregator,
+      const void *user_arg)
       : aggregator_(data_manager, converter, immutable_converter, dictionary,
                     suffix_dictionary, pos_matcher,
-                    std::move(single_kanji_prediction_aggregator)) {}
+                    std::move(single_kanji_prediction_aggregator), user_arg) {}
   virtual ~DictionaryPredictionAggregatorTestPeer() = default;
 
   PredictionTypes AggregatePredictionForRequest(
@@ -415,7 +416,8 @@ class MockDataAndAggregator {
   // nullptr is passed to the |suffix_dictionary|, MockDataManager's suffix
   // dictionary is used.
   // Note that |suffix_dictionary| is owned by this class.
-  void Init(const DictionaryInterface *suffix_dictionary = nullptr) {
+  void Init(const DictionaryInterface *suffix_dictionary = nullptr,
+            const void *user_arg = nullptr) {
     pos_matcher_.Set(data_manager_.GetPosMatcherData());
     mock_dictionary_ = new MockDictionary;
     single_kanji_prediction_aggregator_ =
@@ -432,7 +434,7 @@ class MockDataAndAggregator {
     aggregator_ = std::make_unique<DictionaryPredictionAggregatorTestPeer>(
         data_manager_, &converter_, &mock_immutable_converter_,
         dictionary_.get(), suffix_dictionary_.get(), &pos_matcher_,
-        absl::WrapUnique(single_kanji_prediction_aggregator_));
+        absl::WrapUnique(single_kanji_prediction_aggregator_), user_arg);
   }
 
   MockDictionary *mutable_dictionary() { return mock_dictionary_; }
@@ -1619,17 +1621,18 @@ TEST_F(DictionaryPredictionAggregatorTest, AggregateRealtimeConversion) {
     // "Watashino" | "Namaeha" | "Nakanodesu"
     Segments segments;
 
-    Segment *segment = segments.add_segment();
-    segment->set_key("わたしの");
-    segment->add_candidate()->value = "Watashino";
+    auto add_segment = [&segments](absl::string_view key,
+                                   absl::string_view value) {
+      Segment *segment = segments.add_segment();
+      segment->set_key(key);
+      Segment::Candidate *candidate = segment->add_candidate();
+      candidate->key = std::string(key);
+      candidate->value = std::string(value);
+    };
 
-    segment = segments.add_segment();
-    segment->set_key("なまえは");
-    segment->add_candidate()->value = "Namaeha";
-
-    segment = segments.add_segment();
-    segment->set_key("なかのです");
-    segment->add_candidate()->value = "Nakanodesu";
+    add_segment("わたしの", "Watashino");
+    add_segment("なまえは", "Namaeha");
+    add_segment("なかのです", "Nakanodesu");
 
     EXPECT_CALL(*data_and_aggregator->mutable_converter(),
                 StartConversionForRequest(_, _))
@@ -2017,7 +2020,8 @@ TEST_F(DictionaryPredictionAggregatorTest,
   std::set<std::string> values;
   for (const auto &result : results) {
     EXPECT_EQ(result.types, TYPING_CORRECTION);
-    // Should not have the smaller cost than the original entry wcost (= 0).
+    // Should not have the smaller cost than the original entry wcost (=
+    // 0).
     EXPECT_GE(result.wcost, 0);
     values.insert(result.value);
   }
