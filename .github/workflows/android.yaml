@@ -6,6 +6,8 @@ on:
   push:
     branches: [ master ]
 
+permissions: read-all
+
 # Prevent previous workflows from running.
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
