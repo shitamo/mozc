@@ -63,6 +63,7 @@ from build_tools.util import RunOrDie
 from build_tools.util import RunOrDieError
 
 SRC_DIR = '.'
+OSS_SRC_DIR = '.'
 # We need to obtain the absolute path of this script before change directory.
 # Note that if any import above has already changed the current
 # directory, this code cannot work anymore.
@@ -159,6 +160,7 @@ def GetGypFileNames(options):
     gyp_file_names.extend(glob.glob('%s/unix/emacs/*.gyp' % SRC_DIR))
     gyp_file_names.extend(glob.glob('%s/unix/fcitx/*.gyp' % SRC_DIR))
     gyp_file_names.extend(glob.glob('%s/unix/fcitx5/*.gyp' % SRC_DIR))
+    gyp_file_names.extend(glob.glob('%s/unix/emacs/*.gyp' % OSS_SRC_DIR))
   gyp_file_names.sort()
   return gyp_file_names
 
