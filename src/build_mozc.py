@@ -157,10 +157,9 @@ def GetGypFileNames(options):
   if options.target_platform == 'Windows':
     gyp_file_names.extend(glob.glob('%s/win32/*/*.gyp' % SRC_DIR))
   elif options.target_platform == 'Linux':
-    gyp_file_names.extend(glob.glob('%s/unix/emacs/*.gyp' % SRC_DIR))
+    gyp_file_names.extend(glob.glob('%s/unix/emacs/*.gyp' % OSS_SRC_DIR))
     gyp_file_names.extend(glob.glob('%s/unix/fcitx/*.gyp' % SRC_DIR))
     gyp_file_names.extend(glob.glob('%s/unix/fcitx5/*.gyp' % SRC_DIR))
-    gyp_file_names.extend(glob.glob('%s/unix/emacs/*.gyp' % OSS_SRC_DIR))
   gyp_file_names.sort()
   return gyp_file_names
 
