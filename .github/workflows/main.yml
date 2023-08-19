@@ -32,13 +32,16 @@ jobs:
       - name: setup
         run: |
           sudo apt-get update
-          sudo apt-get install -y libibus-1.0-dev qtbase5-dev
+          sudo apt-get install -y libibus-1.0-dev qt6-base-dev libgl-dev
           sudo apt-get install -y libuim-dev fcitx-libs-dev libfcitx5config-dev libfcitx5utils-dev libfcitx5core-dev fcitx5-modules-dev
           echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
           #
           # Unset the Android NDK setting to skip the unnecessary configuration.
           echo "ANDROID_NDK_HOME=" >> $GITHUB_ENV
+          #
+          # Work around https://bugreports.qt.io/browse/QTBUG-86080 for Ubuntu 22.04
+          echo "PKG_CONFIG_PATH=${PWD}/docker/ubuntu22.04/qt6-core-pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
 
       - name: build
         working-directory: ./src
