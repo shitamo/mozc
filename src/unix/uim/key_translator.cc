@@ -33,6 +33,7 @@
 #include <uim.h>
 
 #include "base/logging.h"
+#include "base/vlog.h"
 
 namespace {
 
@@ -344,7 +345,7 @@ bool KeyTranslator::Translate(unsigned int keyval,
     /* regards yen key as backslash */
     out_event->set_key_code('\\');
   } else {
-    VLOG(1) << "Unknown keyval: " << keyval;
+    MOZC_VLOG(1) << "Unknown keyval: " << keyval;
     return false;
   }
 

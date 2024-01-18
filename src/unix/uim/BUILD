@@ -17,6 +17,7 @@ mozc_cc_library(
     deps = [
         "//base:logging",
         "//base:port",
+        "//base:vlog",
         "//protocol:config_cc_proto",
         "//protocol:commands_cc_proto",
         "//client:client",
