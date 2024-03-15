@@ -33,12 +33,12 @@
 #include <memory>
 #include <string>
 
+#include "absl/log/log.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "base/file/temp_dir.h"
 #include "base/file_util.h"
 #include "base/hash.h"
-#include "base/logging.h"
 #include "data_manager/data_manager.h"
 #include "data_manager/data_manager_interface.h"
 #include "protocol/engine_builder.pb.h"
@@ -346,7 +346,7 @@ TEST_P(DataLoaderTest, RegisterRequestTest) {
   };
 
   auto unregister_request = [&](absl::string_view file_path, int32_t priority) {
-    return loader_.UnregisterRequest(id(file_path, priority));
+    return loader_.ReportLoadFailure(id(file_path, priority));
   };
 
   // Register request.
