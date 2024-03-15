@@ -77,7 +77,10 @@ class DataLoader {
   // avoid the multiple loading operations.  Client needs to load or use the
   // engine of returned id. The unregistered request will not be accepted after
   // calling this method.
-  uint64_t UnregisterRequest(uint64_t id);
+  uint64_t ReportLoadFailure(uint64_t id);
+
+  // Sets the id of DataLoader::Response as the ID of the currently using data.
+  void ReportLoadSuccess(uint64_t id) { current_data_id_ = id; }
 
   // Builds the new engine associated with `id`.
   // This method returns the future object immediately.
@@ -87,6 +90,19 @@ class DataLoader {
   virtual std::unique_ptr<ResponseFuture> Build(uint64_t id) const;
 
   void Clear();
+
+  // Maybe build new data loader if a reload request has been already received.
+  // Returns true, a new data loader response is already available.
+  bool MaybeBuildDataLoader();
+
+  // Maybe move the data loader response to the caller.
+  // Otherwise nullptr is returned.
+  std::unique_ptr<DataLoader::Response> MaybeMoveDataLoaderResponse();
+
+  // Used only in unittest to perform blocking behavior.
+  void SetAlwaysWaitForLoaderResponseFutureForTesting(bool value) {
+    always_wait_for_loader_response_future_ = value;
+  }
 
  private:
   struct RequestData {
@@ -102,6 +118,13 @@ class DataLoader {
   mutable absl::Mutex mutex_;
   absl::flat_hash_set<uint64_t> unregistered_ ABSL_GUARDED_BY(mutex_);
   std::vector<RequestData> requests_ ABSL_GUARDED_BY(mutex_);
+
+  // 0 means that no data has been updated yet.
+  std::atomic<uint64_t> latest_data_id_ = 0;
+  std::atomic<uint64_t> current_data_id_ = 0;
+  std::unique_ptr<DataLoader::ResponseFuture> loader_response_future_;
+  // used only in unittest to perform blocking behavior.
+  bool always_wait_for_loader_response_future_ = false;
 };
 
 }  // namespace mozc
