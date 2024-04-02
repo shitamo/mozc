@@ -13,6 +13,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHON_VENV_ROOT: ${{ github.workspace }}/src/python-venv
+
 jobs:
   build_arm64:
     # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-14-Readme.md
@@ -25,9 +28,10 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install pip dependencies
-        working-directory: ./src
+      - name: Setup Python
         run: |
+          python3 -m venv ${PYTHON_VENV_ROOT}
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 -m pip install requests
 
       - name: Try to restore update_deps cache
@@ -40,11 +44,13 @@ jobs:
         working-directory: ./src
         # This command uses src/third_party_cache as the download cache.
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/update_deps.py
 
       - name: Build Qt
         working-directory: ./src
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/build_qt.py --release --confirm_license --macos_cpus=arm64
           echo "MOZC_QT_PATH=${PWD}/third_party/qt" >> $GITHUB_ENV
 
@@ -71,9 +77,10 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install pip dependencies
-        working-directory: ./src
+      - name: Setup Python
         run: |
+          python3 -m venv ${PYTHON_VENV_ROOT}
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 -m pip install requests
 
       - name: Try to restore update_deps cache
@@ -86,11 +93,13 @@ jobs:
         working-directory: ./src
         # This command uses src/third_party_cache as the download cache.
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/update_deps.py
 
       - name: Build Qt
         working-directory: ./src
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/build_qt.py --release --confirm_license --macos_cpus=x86_64
           echo "MOZC_QT_PATH=${PWD}/third_party/qt" >> $GITHUB_ENV
 
@@ -117,9 +126,10 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install pip dependencies
-        working-directory: ./src
+      - name: Setup Python
         run: |
+          python3 -m venv ${PYTHON_VENV_ROOT}
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 -m pip install requests
 
       - name: Try to restore update_deps cache
@@ -132,11 +142,13 @@ jobs:
         working-directory: ./src
         # This command uses src/third_party_cache as the download cache.
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/update_deps.py
 
       - name: Build Qt
         working-directory: ./src
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/build_qt.py --release --confirm_license --macos_cpus=x86_64,arm64
           echo "MOZC_QT_PATH=${PWD}/third_party/qt" >> $GITHUB_ENV
 
@@ -163,9 +175,10 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install pip dependencies
-        working-directory: ./src
+      - name: Setup Python
         run: |
+          python3 -m venv ${PYTHON_VENV_ROOT}
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 -m pip install requests
 
       - name: Try to restore update_deps cache
@@ -178,11 +191,13 @@ jobs:
         working-directory: ./src
         # This command uses src/third_party_cache as the download cache.
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/update_deps.py
 
       - name: Build Qt
         working-directory: ./src
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/build_qt.py --release --confirm_license
           echo "MOZC_QT_PATH=${PWD}/third_party/qt" >> $GITHUB_ENV
 
@@ -203,9 +218,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Install pip dependencies
-        working-directory: ./src
+      - name: Setup Python
         run: |
+          python3 -m venv ${PYTHON_VENV_ROOT}
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 -m pip install requests
 
       - name: Try to restore update_deps cache
@@ -218,4 +234,5 @@ jobs:
         working-directory: ./src
         # This command uses src/third_party_cache as the download cache.
         run: |
+          source ${PYTHON_VENV_ROOT}/bin/activate
           python3 build_tools/update_deps.py --cache_only
