@@ -32,7 +32,7 @@
 
 #include <uim.h>
 
-#include "base/logging.h"
+#include "absl/log/check.h"
 #include "base/vlog.h"
 
 namespace {

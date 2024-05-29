@@ -15,11 +15,11 @@ mozc_cc_library(
         "key_translator.h",
     ],
     deps = [
-        "//base:logging",
         "//base:port",
         "//base:vlog",
         "//protocol:config_cc_proto",
         "//protocol:commands_cc_proto",
+        "@com_google_absl//absl/log:check",
         "//client:client",
         "@uim//:uim",
     ],
