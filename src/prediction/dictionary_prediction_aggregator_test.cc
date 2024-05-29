@@ -76,7 +76,6 @@
 #include "testing/mozctest.h"
 #include "transliteration/transliteration.h"
 
-
 namespace mozc {
 namespace prediction {
 
@@ -199,7 +198,6 @@ using ::testing::SetArgPointee;
 using ::testing::StrEq;
 using ::testing::Truly;
 using ::testing::WithParamInterface;
-
 
 // Action to call the third argument of LookupPrefix/LookupPredictive with the
 // token <key, value>.
