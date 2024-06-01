@@ -29,23 +29,33 @@
 
 #include "unix/fcitx5/mozc_state.h"
 
-#include <fcitx-utils/i18n.h>
+#include <fcitx-utils/capabilityflags.h>
+#include <fcitx-utils/key.h>
+#include <fcitx-utils/keysym.h>
 #include <fcitx-utils/log.h>
 #include <fcitx-utils/stringutils.h>
+#include <fcitx-utils/utf8.h>
 #include <fcitx/candidatelist.h>
+#include <fcitx/event.h>
 #include <fcitx/inputpanel.h>
+#include <fcitx/text.h>
+#include <fcitx/userinterface.h>
 
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <string>
+#include <utility>
 
-#include "base/const.h"
-#include "base/file_util.h"
-#include "base/logging.h"
-#include "base/vlog.h"
+#include "absl/log/check.h"
+#include "absl/log/log.h"
 #include "base/process.h"
-#include "base/system_util.h"
-#include "base/util.h"
+#include "base/vlog.h"
 #include "client/client_interface.h"
+#include "protocol/commands.pb.h"
+#include "protocol/config.pb.h"
 #include "unix/fcitx5/fcitx_key_event_handler.h"
+#include "unix/fcitx5/i18nwrapper.h"
 #include "unix/fcitx5/mozc_connection.h"
 #include "unix/fcitx5/mozc_engine.h"
 #include "unix/fcitx5/mozc_response_parser.h"
@@ -72,9 +82,7 @@ MozcState::MozcState(InputContext* ic, MozcEngine* engine)
   }
 }
 
-MozcState::~MozcState() {
-  MOZC_VLOG(1) << "MozcState destroyed.";
-}
+MozcState::~MozcState() { MOZC_VLOG(1) << "MozcState destroyed."; }
 
 void MozcState::UpdatePreeditMethod() {
   mozc::config::Config config;
@@ -103,10 +111,10 @@ void MozcState::UpdatePreeditMethod() {
   }
 }
 
-bool MozcState::TrySendKeyEvent(
-    InputContext* ic, KeySym sym, uint32_t keycode, KeyStates state,
-    mozc::commands::CompositionMode composition_mode, bool layout_is_jp,
-    bool is_key_up, mozc::commands::Output* out, std::string* out_error) const {
+bool MozcState::TrySendKeyEvent(InputContext* ic,
+                                const mozc::commands::KeyEvent& event,
+                                mozc::commands::Output* out,
+                                std::string* out_error) const {
   DCHECK(out);
   DCHECK(out_error);
 
@@ -119,12 +127,7 @@ bool MozcState::TrySendKeyEvent(
     return false;
   }
 
-  mozc::commands::KeyEvent event;
-  if (!handler_->GetKeyEvent(sym, keycode, state, preedit_method_, layout_is_jp,
-                             is_key_up, &event))
-    return false;
-
-  if ((composition_mode == mozc::commands::DIRECT) &&
+  if ((composition_mode_ == mozc::commands::DIRECT) &&
       !client->IsDirectModeCommand(event)) {
     MOZC_VLOG(1) << "In DIRECT mode. Not consumed.";
     return false;  // not consumed.
@@ -138,13 +141,13 @@ bool MozcState::TrySendKeyEvent(
     context.set_following_text(surrounding_text_info.following_text);
   }
 
-  MOZC_VLOG(1) << "TrySendKeyEvent: " << std::endl << event.DebugString();
+  MOZC_VLOG(1) << "TrySendKeyEvent: " << event.DebugString();
   if (!client->SendKeyWithContext(event, context, out)) {
     *out_error = "SendKey failed";
     MOZC_VLOG(1) << "ERROR";
     return false;
   }
-  MOZC_VLOG(1) << "OK: " << std::endl << out->DebugString();
+  MOZC_VLOG(1) << "OK: " << out->DebugString();
   return true;
 }
 
@@ -190,13 +193,13 @@ bool MozcState::TrySendCommand(mozc::commands::SessionCommand::CommandType type,
 bool MozcState::TrySendRawCommand(const mozc::commands::SessionCommand& command,
                                   mozc::commands::Output* out,
                                   std::string* out_error) const {
-  MOZC_VLOG(1) << "TrySendRawCommand: " << std::endl << command.DebugString();
+  MOZC_VLOG(1) << "TrySendRawCommand: " << command.DebugString();
   if (!GetClient()->SendCommand(command, out)) {
     *out_error = "SendCommand failed";
     MOZC_VLOG(1) << "ERROR";
     return false;
   }
-  MOZC_VLOG(1) << "OK: " << std::endl << out->DebugString();
+  MOZC_VLOG(1) << "OK: " << out->DebugString();
   return true;
 }
 
@@ -225,11 +228,42 @@ bool MozcState::ProcessKeyEvent(KeySym sym, uint32_t keycode, KeyStates state,
     }
   }
 
+  mozc::commands::KeyEvent event;
+  std::optional<std::string> compose;
+  do {
+    if (!is_key_up &&
+        !state.testAny(KeyStates{KeyState::Ctrl, KeyState::Super})) {
+      compose = engine_->instance()->processComposeString(ic_, sym);
+      if (!compose) {
+        return true;
+      }
+      if (!compose->empty()) {
+        auto length = utf8::lengthValidated(*compose);
+        if (length == utf8::INVALID_LENGTH) {
+          return true;
+        }
+        if (!handler_->GetKeyEvent(*compose, preedit_method_, layout_is_jp,
+                                   &event)) {
+          return false;
+        }
+        break;
+      }
+    }
+    if (!handler_->GetKeyEvent(sym, keycode, state, preedit_method_,
+                               layout_is_jp, is_key_up, &event)) {
+      return false;
+    }
+  } while (false);
+
   std::string error;
   mozc::commands::Output raw_response;
-  if (!TrySendKeyEvent(ic_, sym, keycode, state, composition_mode_,
-                       layout_is_jp, is_key_up, &raw_response, &error)) {
+  if (!TrySendKeyEvent(ic_, event, &raw_response, &error)) {
     // TODO(yusukes): Show |error|.
+    if (compose && !compose->empty()) {
+      ic_->commitString(*compose);
+      Reset();
+      return true;
+    }
     return false;  // not consumed.
   }
 
@@ -267,6 +301,7 @@ void MozcState::Reset() {
   }
   ClearAll();  // just in case.
   DrawAll();
+  engine_->instance()->resetCompose(ic_);
 }
 
 bool MozcState::Paging(bool prev) {
@@ -307,6 +342,7 @@ void MozcState::FocusOut(const InputContextEvent& event) {
   }
   ClearAll();  // just in case.
   DrawAll();
+  engine_->instance()->resetCompose(ic_);
 }
 
 bool MozcState::ParseResponse(const mozc::commands::Output& raw_response) {
@@ -380,10 +416,10 @@ void MozcState::DrawAll() {
     }
   } else {
     Text preedit = preedit_;
-    if (preedit.size()) {
+    if (!preedit.empty()) {
       preedit.append(" ");
       preedit.append(aux);
-      ic_->inputPanel().setPreedit(std::move(preedit));
+      ic_->inputPanel().setPreedit(preedit);
     } else if (!aux_.empty()) {
       ic_->inputPanel().setAuxUp(Text(aux));
     }

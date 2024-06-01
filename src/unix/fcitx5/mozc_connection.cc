@@ -30,11 +30,9 @@
 
 #include "unix/fcitx5/mozc_connection.h"
 
-#include <string>
+#include <memory>
 
-#include "base/logging.h"
 #include "base/vlog.h"
-#include "base/util.h"
 #include "client/client.h"
 #include "ipc/ipc.h"
 #include "protocol/commands.pb.h"
@@ -56,7 +54,9 @@ MozcConnection::MozcConnection()
   MOZC_VLOG(1) << "MozcConnection is created";
 }
 
-MozcConnection::~MozcConnection() { MOZC_VLOG(1) << "MozcConnection is destroyed"; }
+MozcConnection::~MozcConnection() {
+  MOZC_VLOG(1) << "MozcConnection is destroyed";
+}
 
 std::unique_ptr<mozc::client::ClientInterface> MozcConnection::CreateClient() {
   auto client = CreateAndConfigureClient();

@@ -35,16 +35,17 @@
 #include <fcitx/inputcontextproperty.h>
 #include <fcitx/text.h>
 
+#include <cstdint>
 #include <memory>
+#include <string>
 
-#include "base/port.h"
-#include "base/run_level.h"
 #include "client/client_interface.h"
 #include "protocol/commands.pb.h"
+#include "protocol/config.pb.h"
 #include "unix/fcitx5/mozc_client_pool.h"
 
 namespace fcitx {
-const int32_t kBadCandidateId = -12345;
+inline const int32_t kBadCandidateId = -12345;
 class MozcConnectionInterface;
 class MozcResponseParser;
 class KeyTranslator;
@@ -89,7 +90,7 @@ class MozcState : public InputContextProperty {
   // Sets the url to be opened by the default browser.
   void SetUrl(const std::string &url);
 
-  const std::string &GetIconFile(const std::string key);
+  const std::string &GetIconFile(std::string key);
 
   mozc::commands::CompositionMode GetCompositionMode() {
     return composition_mode_;
@@ -111,10 +112,7 @@ class MozcState : public InputContextProperty {
   // response is stored on 'out' (and 'out_error' is not modified). If the IPC
   // fails, returns false and the error message is stored on 'out_error'. In
   // this case, 'out' is not modified.
-  bool TrySendKeyEvent(InputContext *ic, KeySym sym, uint32_t keycode,
-                       KeyStates state,
-                       mozc::commands::CompositionMode composition_mode,
-                       bool layout_is_jp, bool is_key_up,
+  bool TrySendKeyEvent(InputContext *ic, const mozc::commands::KeyEvent &event,
                        mozc::commands::Output *out,
                        std::string *out_error) const;
 
@@ -138,7 +136,7 @@ class MozcState : public InputContextProperty {
 
   // Parses the response from mozc_server. Returns whether the server consumes
   // the input or not (true means 'consumed').
-  bool ParseResponse(const mozc::commands::Output &request);
+  bool ParseResponse(const mozc::commands::Output &raw_response);
 
   void ClearAll();
   void DrawPreeditInfo();

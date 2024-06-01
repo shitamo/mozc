@@ -32,6 +32,16 @@ mozc_cc_library(
 )
 
 mozc_cc_library(
+    name = "i18nwrapper",
+    hdrs = [
+        "i18nwrapper.h"
+    ],
+    deps = [
+        "@fcitx5//:fcitx5"
+    ]
+)
+
+mozc_cc_library(
     name = "mozc_engine",
     srcs = [
         "mozc_engine.cc",
@@ -43,10 +53,8 @@ mozc_cc_library(
         "mozc_response_parser.h",
         "mozc_state.h"
     ],
-    local_defines = [
-        'FCITX_GETTEXT_DOMAIN=\\"fcitx5-mozc\\"',
-    ],
     deps = [
+        ":i18nwrapper",
         ":mozc_connection",
         ":mozc_client_pool",
         ":fcitx_key_util",
@@ -74,12 +82,12 @@ mozc_cc_library(
         "fcitx_key_translator.h",
     ],
     deps = [
-        "//base:logging",
         "//base:port",
         "//base:vlog",
         "//base:singleton",
         "//protocol:config_cc_proto",
         "//protocol:commands_cc_proto",
+        "@com_google_absl//absl/log:check",
         "@fcitx5//:fcitx5",
     ],
 )
@@ -94,9 +102,9 @@ mozc_cc_library(
     ],
     deps = [
         "//base:util",
-        "//base:logging",
         "//base:port",
         "//base:vlog",
+        "@com_google_absl//absl/log:check",
         "@fcitx5//:fcitx5",
     ],
 )

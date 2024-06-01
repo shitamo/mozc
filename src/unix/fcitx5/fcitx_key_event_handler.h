@@ -33,10 +33,10 @@
 
 #include <fcitx-utils/key.h>
 
+#include <cstdint>
 #include <memory>
 #include <set>
 
-#include "base/port.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
 #include "unix/fcitx5/fcitx_key_translator.h"
@@ -55,6 +55,10 @@ class KeyEventHandler {
                    mozc::config::Config::PreeditMethod preedit_method,
                    bool layout_is_jp, bool is_key_up,
                    mozc::commands::KeyEvent *key);
+
+  bool GetKeyEvent(const std::string &composeString,
+                   mozc::config::Config::PreeditMethod preedit_method,
+                   bool layout_is_jp, mozc::commands::KeyEvent *key);
 
   // Clears states.
   void Clear();

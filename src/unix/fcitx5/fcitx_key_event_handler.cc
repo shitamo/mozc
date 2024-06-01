@@ -30,11 +30,22 @@
 
 #include "unix/fcitx5/fcitx_key_event_handler.h"
 
-#include <map>
+#include <fcitx-utils/charutils.h>
+#include <fcitx-utils/key.h>
+#include <fcitx-utils/utf8.h>
 
-#include "base/logging.h"
-#include "base/vlog.h"
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+
+#include "absl/log/check.h"
+#include "absl/log/log.h"
 #include "base/singleton.h"
+#include "protocol/commands.pb.h"
+#include "protocol/config.pb.h"
+#include "unix/fcitx5/fcitx_key_translator.h"
 
 namespace fcitx {
 
@@ -72,11 +83,9 @@ void AddAdditionalModifiers(
       mozc::Singleton<AdditionalModifiersData>::get()->data();
 
   // Adds MODIFIER if there are (LEFT|RIGHT)_MODIFIER like LEFT_SHIFT.
-  for (std::set<mozc::commands::KeyEvent::ModifierKey>::const_iterator it =
-           modifier_keys_set->begin();
-       it != modifier_keys_set->end(); ++it) {
-    std::map<uint32_t, mozc::commands::KeyEvent::ModifierKey>::const_iterator
-        item = data.find(*it);
+  for (auto it = modifier_keys_set->begin(); it != modifier_keys_set->end();
+       ++it) {
+    auto item = data.find(*it);
     if (item != data.end()) {
       modifier_keys_set->insert(item->second);
     }
@@ -97,7 +106,8 @@ bool IsModifierToBeSentOnKeyUp(const mozc::commands::KeyEvent &key_event) {
 }
 }  // namespace
 
-KeyEventHandler::KeyEventHandler() : key_translator_(new KeyTranslator) {
+KeyEventHandler::KeyEventHandler()
+    : key_translator_(std::make_unique<KeyTranslator>()) {
   Clear();
 }
 
@@ -115,6 +125,24 @@ bool KeyEventHandler::GetKeyEvent(
   }
 
   return ProcessModifiers(is_key_up, keyval, key);
+}
+
+bool KeyEventHandler::GetKeyEvent(
+    const std::string &composeString,
+    mozc::config::Config::PreeditMethod preedit_method, bool layout_is_jp,
+    mozc::commands::KeyEvent *key) {
+  key->Clear();
+  auto length = utf8::length(composeString);
+  if (length == 1) {
+    auto chr = utf8::getChar(composeString);
+    // For ascii key & yen, use the regular key event conversion.
+    if ((chr >= 0x20 && chr <= 0x7e) || chr == 0xa5) {
+      return GetKeyEvent(static_cast<KeySym>(chr), 0, KeyStates(),
+                         preedit_method, layout_is_jp, false, key);
+    }
+  }
+  key->set_key_string(composeString);
+  return true;
 }
 
 void KeyEventHandler::Clear() {
@@ -225,7 +253,7 @@ bool KeyEventHandler::ProcessModifiers(bool is_key_up, uint32_t keyval,
     // implementation does NOT do it.
     if (currently_pressed_modifiers_.empty() ||
         !modifiers_to_be_sent_.empty()) {
-      for (size_t i = 0; i < key_event->modifier_keys_size(); ++i) {
+      for (int i = 0; i < key_event->modifier_keys_size(); ++i) {
         modifiers_to_be_sent_.insert(key_event->modifier_keys(i));
       }
       AddAdditionalModifiers(&modifiers_to_be_sent_);
