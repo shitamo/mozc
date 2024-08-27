@@ -59,12 +59,11 @@ mozc_cc_library(
     ],
     deps = [
         "//base:port",
+	"//base:singleton",
         "//base:vlog",
-        "//base:singleton",
         "//protocol:config_cc_proto",
         "//protocol:commands_cc_proto",
 	"@com_google_absl//absl/log:check",
-        "@fcitx//:fcitx",
     ],
 )
 
@@ -81,7 +80,6 @@ mozc_cc_library(
         "//base:port",
         "//base:vlog",
 	"@com_google_absl//absl/log:check",
-        "@fcitx//:fcitx",
     ],
 )
 
@@ -91,7 +89,6 @@ mozc_cc_binary(
     deps = [
         ":fcitx_mozc",
         "//base:init_mozc",
-        "@fcitx//:fcitx",
     ],
     local_defines = [
         'LOCALEDIR=\\"/usr/share/locale\\"',
