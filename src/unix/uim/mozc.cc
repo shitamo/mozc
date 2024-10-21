@@ -287,7 +287,7 @@ update_candidates(uim_lisp mc_, int id)
     return;
   }
 
-  const commands::Candidates &candidates = output->candidates();
+  const commands::CandidateWindow &candidates = output->candidates();
   bool first_time = false;
   bool has_focused_index = candidates.has_focused_index();
   int current_page = has_focused_index ? candidates.focused_index() / 9 : 0;
@@ -576,7 +576,7 @@ get_nth_candidate(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
   commands::Output *output = context_slot[id].output;
-  const commands::Candidates &candidates = output->candidates();
+  const commands::CandidateWindow &candidates = output->candidates();
   const char *cand, *prefix, *suffix;
   char *s;
 
@@ -612,7 +612,7 @@ get_nth_label(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
   commands::Output *output = context_slot[id].output;
-  const commands::Candidates &candidates = output->candidates();
+  const commands::CandidateWindow &candidates = output->candidates();
   const char *label;
 
   int nth;
@@ -641,7 +641,7 @@ get_nth_annotation(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
   commands::Output *output = context_slot[id].output;
-  const commands::Candidates &candidates = output->candidates();
+  const commands::CandidateWindow &candidates = output->candidates();
   const char *annotation;
 
   int nth;
