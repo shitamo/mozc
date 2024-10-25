@@ -44,7 +44,7 @@ jobs:
         run: |
           python build_tools/update_deps.py
 
-      - name: Biuld Qt
+      - name: Build Qt
         shell: cmd
         working-directory: .\src
         run: |
@@ -106,7 +106,7 @@ jobs:
         run: |
           python build_tools/update_deps.py
 
-      - name: Biuld Qt
+      - name: Build Qt
         shell: cmd
         working-directory: .\src
         run: |
