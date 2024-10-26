@@ -16,9 +16,9 @@ mozc_cc_library(
         "//base:port",
         "//base:util",
         "//base:vlog",
-        "//client:client",
+        "//client",
         "//protocol:commands_cc_proto",
-    ]
+    ],
 )
 
 mozc_cc_library(
@@ -55,10 +55,10 @@ mozc_cc_library(
         "mozc_state.h"
     ],
     deps = [
-        ":i18nwrapper",
-        ":mozc_connection",
-        ":mozc_client_pool",
         ":fcitx_key_util",
+        ":i18nwrapper",
+        ":mozc_client_pool",
+        ":mozc_connection",
         ":surrounding_text_util",
         "//base:init_mozc",
         "//base:port",
@@ -66,10 +66,10 @@ mozc_cc_library(
         "//base:run_level",
         "//base:util",
         "//base:vlog",
+        "//client:client_interface",
         "//protocol:candidates_cc_proto",
         "//protocol:commands_cc_proto",
-        "//client:client_interface",
-        "@fcitx5//:fcitx5",
+        "@fcitx5",
     ],
 )
 
@@ -85,12 +85,12 @@ mozc_cc_library(
     ],
     deps = [
         "//base:port",
-        "//base:vlog",
         "//base:singleton",
-        "//protocol:config_cc_proto",
+        "//base:vlog",
         "//protocol:commands_cc_proto",
+        "//protocol:config_cc_proto",
         "@com_google_absl//absl/log:check",
-        "@fcitx5//:fcitx5",
+        "@fcitx5",
     ],
 )
 
@@ -103,23 +103,23 @@ mozc_cc_library(
         "surrounding_text_util.h",
     ],
     deps = [
-        "//base:util",
         "//base:port",
+        "//base:util",
         "//base:vlog",
         "@com_google_absl//absl/log:check",
-        "@fcitx5//:fcitx5",
+        "@fcitx5",
     ],
 )
 
 mozc_cc_binary(
     name = "fcitx5-mozc.so",
     srcs = [
-        "mozc_engine_factory.cc"
-    ],
-    deps = [
-        ":mozc_engine",
+        "mozc_engine_factory.cc",
     ],
     linkstatic = 1,
     linkshared = 1,
+    deps = [
+        ":mozc_engine",
+    ],
 )
 

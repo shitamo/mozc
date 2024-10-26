@@ -17,26 +17,26 @@ mozc_cc_library(
     deps = [
         "//base:port",
         "//base:vlog",
-        "//protocol:config_cc_proto",
+        "//client",
         "//protocol:commands_cc_proto",
+        "//protocol:config_cc_proto",
         "@com_google_absl//absl/log:check",
-        "//client:client",
-        "@uim//:uim",
+        "@uim",
     ],
 )
 
 mozc_cc_binary(
     name = "libuim-mozc.so",
     srcs = ["mozc.cc"],
-    deps = [
-        "//base:init_mozc",
-        "//protocol:config_cc_proto",
-        "//protocol:commands_cc_proto",
-        "//client:client",
-        ":uim_key_translator",
-        "@uim//:uim",
-    ],
     linkstatic = 1,
     linkshared = 1,
+    deps = [
+        ":uim_key_translator",
+        "//base:init_mozc",
+        "//client",
+        "//protocol:commands_cc_proto",
+        "//protocol:config_cc_proto",
+        "@uim",
+    ],
 )
 

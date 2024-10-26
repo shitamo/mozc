@@ -15,10 +15,10 @@ cc_library(
     ]),
     copts = ["-pthread"],
     includes = [
-        "include/Fcitx5/Core",
         "include/Fcitx5/Config",
-        "include/Fcitx5/Utils",
+        "include/Fcitx5/Core",
         "include/Fcitx5/Module",
+        "include/Fcitx5/Utils",
     ],
     linkopts = [
         "-lFcitx5Core",

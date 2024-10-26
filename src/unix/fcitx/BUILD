@@ -16,9 +16,9 @@ mozc_cc_library(
         "//base:port",
         "//base:util",
         "//base:vlog",
-        "//client:client",
+        "//client",
         "//protocol:commands_cc_proto",
-    ]
+    ],
 )
 
 mozc_cc_library(
