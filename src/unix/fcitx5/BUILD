@@ -39,7 +39,7 @@ mozc_cc_library(
     ],
     deps = [
         "@fcitx5",
-    ]
+    ],
 )
 
 mozc_cc_library(
