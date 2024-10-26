@@ -39,4 +39,3 @@ mozc_cc_binary(
         "@uim",
     ],
 )
-

@@ -38,7 +38,7 @@ mozc_cc_library(
         "i18nwrapper.h",
     ],
     deps = [
-        "@fcitx5"
+        "@fcitx5",
     ]
 )
 
@@ -122,4 +122,3 @@ mozc_cc_binary(
         ":mozc_engine",
     ],
 )
-

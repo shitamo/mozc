@@ -92,7 +92,6 @@ mozc_cc_binary(
     deps = [
         ":fcitx_mozc",
         "//base:init_mozc",
-        "@fcitx//:fcitx",
+        "@fcitx",
     ],
 )
-
