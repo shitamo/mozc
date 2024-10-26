@@ -28,8 +28,8 @@ mozc_cc_library(
 mozc_cc_binary(
     name = "libuim-mozc.so",
     srcs = ["mozc.cc"],
-    linkstatic = 1,
     linkshared = 1,
+    linkstatic = 1,
     deps = [
         ":uim_key_translator",
         "//base:init_mozc",

@@ -28,17 +28,17 @@ mozc_cc_library(
     deps = [
         ":mozc_connection",
         "//client:client_interface",
-        "@fcitx5//:fcitx5",
-    ]
+        "@fcitx5",
+    ],
 )
 
 mozc_cc_library(
     name = "i18nwrapper",
     hdrs = [
-        "i18nwrapper.h"
+        "i18nwrapper.h",
     ],
     deps = [
-        "@fcitx5//:fcitx5"
+        "@fcitx5"
     ]
 )
 
@@ -47,12 +47,12 @@ mozc_cc_library(
     srcs = [
         "mozc_engine.cc",
         "mozc_response_parser.cc",
-        "mozc_state.cc"
+        "mozc_state.cc",
     ],
     hdrs = [
         "mozc_engine.h",
         "mozc_response_parser.h",
-        "mozc_state.h"
+        "mozc_state.h",
     ],
     deps = [
         ":fcitx_key_util",
@@ -116,8 +116,8 @@ mozc_cc_binary(
     srcs = [
         "mozc_engine_factory.cc",
     ],
-    linkstatic = 1,
     linkshared = 1,
+    linkstatic = 1,
     deps = [
         ":mozc_engine",
     ],

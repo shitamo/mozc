@@ -32,16 +32,16 @@ mozc_cc_library(
         "mozc_response_parser.h",
     ],
     deps = [
-        ":mozc_connection",
         ":fcitx_key_util",
+        ":mozc_connection",
         ":surrounding_text_util",
         "//base:port",
         "//base:process",
         "//base:run_level",
         "//base:util",
         "//base:vlog",
-        "//protocol:commands_cc_proto",
         "//client:client_interface",
+        "//protocol:commands_cc_proto",
     ],
 )
 
@@ -59,9 +59,9 @@ mozc_cc_library(
         "//base:port",
         "//base:singleton",
         "//base:vlog",
-        "//protocol:config_cc_proto",
         "//protocol:commands_cc_proto",
-        "@fcitx//:fcitx",
+        "//protocol:config_cc_proto",
+        "@fcitx",
     ],
 )
 
@@ -74,25 +74,25 @@ mozc_cc_library(
         "surrounding_text_util.h",
     ],
     deps = [
-        "//base:util",
         "//base:port",
+        "//base:util",
         "//base:vlog",
-        "@fcitx//:fcitx",
+        "@fcitx",
     ],
 )
 
 mozc_cc_binary(
     name = "fcitx-mozc.so",
     srcs = ["eim.cc"],
+    linkshared = 1,
+    linkstatic = 1,
+    local_defines = [
+        'LOCALEDIR=\\"/usr/share/locale\\"',
+    ],
     deps = [
         ":fcitx_mozc",
         "//base:init_mozc",
         "@fcitx//:fcitx",
     ],
-    local_defines = [
-        'LOCALEDIR=\\"/usr/share/locale\\"',
-    ],
-    linkstatic = 1,
-    linkshared = 1,
 )
 
