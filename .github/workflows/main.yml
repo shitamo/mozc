@@ -40,10 +40,14 @@ jobs:
 
       - name: build
         working-directory: ./src
+        env:
+          USE_BAZEL_VERSION: "7.4.1"
         run: |
           bazel build --config oss_linux //unix/uim:libuim-mozc.so //server:mozc_server //renderer/qt:mozc_renderer //unix/ibus:ibus_mozc //unix:icons //unix/emacs:mozc_emacs_helper //gui/tool:mozc_tool
 
       - name: tests
         working-directory: ./src
+        env:
+          USE_BAZEL_VERSION: "7.4.1"
         run: |
           bazel test ... --config oss_linux --build_tests_only -- -unix/fcitx/... -unix/fcitx5/... -win32/...
