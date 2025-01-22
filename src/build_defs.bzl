@@ -210,7 +210,7 @@ def _win_executable_transition_impl(
         attr):
     features = ["generate_pdb_file"]
     if attr.static_crt:
-        features += ["static_link_msvcrt"]
+        features.append("static_link_msvcrt")
     return {
         "//command_line_option:features": features,
         "//command_line_option:platforms": [attr.platform],
@@ -340,6 +340,11 @@ def mozc_win32_cc_prod_binary(
         "/DEBUG:FULL",
         "/PDBALTPATH:%_PDB%",
     ])
+
+    # '/CETCOMPAT' is available only on x86/x64 architectures.
+    if cpu in ["@platforms//cpu:x86_32", "@platforms//cpu:x86_64"]:
+        modified_linkopts.append("/CETCOMPAT")
+
     mozc_cc_binary(
         name = intermediate_name,
         srcs = srcs,
