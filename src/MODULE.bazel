@@ -2,39 +2,28 @@
 # To use Bzlmod, you need to specify --enable_bzlmod to the Bazel command or modify .bazelrc.
 module(name = "mozc")
 
-# abseil-cpp with patches for Bazel 8.0.0 is used instead of the local Abseil in third_party/.
-# Otherwise, `bazel fetch` will fail with the error: "cc_configure_extension no longer available".
-# References
-#   * https://github.com/bazelbuild/bazel/issues/24426
-#   * https://github.com/bazelbuild/bazel-central-registry/pull/3320
+# absl-cpp: 2025-02-04
+# https://github.com/abseil/abseil-cpp
 bazel_dep(
     name = "abseil-cpp",
-    version = "20240722.0.bcr.2",
+    version = "20250127.0",
     repo_name = "com_google_absl",
 )
 
-# This is also workaround for the above issue bazel/issues/24426.
-# This bazel_dep should be removed after the issue is fixed.
-bazel_dep(
-    name = "re2",
-    version = "2024-07-02.bcr.1",
-)
+# protobuf: 29.3 2025-01-09
+# https://github.com/protocolbuffers/protobuf
 bazel_dep(
     name = "protobuf",
+    version = "29.3",
     repo_name = "com_google_protobuf",
 )
-local_path_override(
-    module_name = "protobuf",
-    path = "third_party/protobuf",
-)
 
+# googletest: 1.16.0 2025-02-08
+# https://github.com/google/googletest
 bazel_dep(
     name = "googletest",
+    version = "1.16.0",
     repo_name = "com_google_googletest",
-)
-local_path_override(
-    module_name = "googletest",
-    path = "third_party/gtest",
 )
 
 # platforms: 0.0.10 2024-04-26
@@ -90,26 +79,20 @@ use_repo(cc_configure, "local_config_cc")
 
 register_toolchains("@local_config_cc//:all")
 
-# Android NDK rules (0.1.2 2024-07-23)
+# Android NDK rules (0.1.3 2025-01-31)
 # https://github.com/bazelbuild/rules_android_ndk
 bazel_dep(
     name = "rules_android_ndk",
-    version = "0.1.2",
+    version = "0.1.3",
 )
 single_version_override(
     module_name = "rules_android_ndk",
-    # Bazel's built-in patch engine cannot deal with a patch file that affects
-    # multiple files. This is why we have two separate patch files here.
-    # https://github.com/bazelbuild/bazel/issues/10267
     patches = [
-        # Look like this should have been included in the following PR.
-        # https://github.com/bazelbuild/rules_android_ndk/pull/37
-        "bazel/rules_android_ndk.allow_empty_glob.patch",
         # Might be removed after the folloing PR.
         # https://github.com/bazelbuild/rules_android_ndk/pull/63
         "bazel/rules_android_ndk.patch",
     ],
-    version = "0.1.2",
+    version = "0.1.3",
 )
 
 android_ndk_repository_extension = use_extension(
