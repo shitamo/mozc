@@ -36,11 +36,11 @@
 #include <utility>
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "base/absl_nullability.h"
 #include "composer/query.h"
 #include "dictionary/dictionary_token.h"
 #include "prediction/zero_query_dict.h"
@@ -210,6 +210,9 @@ struct ResultCostLess {
 void PopulateTypeCorrectedQuery(
     const composer::TypeCorrectedQuery &typing_corrected_result,
     Result *absl_nonnull result);
+
+// Makes debug string from `types`.
+std::string GetPredictionTypeDebugString(PredictionTypes types);
 
 #ifndef NDEBUG
 #define MOZC_WORD_LOG(result, ...)                                  \

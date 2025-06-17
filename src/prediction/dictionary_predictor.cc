@@ -60,7 +60,6 @@
 #include "converter/segmenter.h"
 #include "converter/segments.h"
 #include "dictionary/pos_matcher.h"
-#include "dictionary/single_kanji_dictionary.h"
 #include "engine/modules.h"
 #include "engine/supplemental_model_interface.h"
 #include "prediction/dictionary_prediction_aggregator.h"
@@ -155,9 +154,6 @@ DictionaryPredictor::DictionaryPredictor(
       connector_(modules.GetConnector()),
       segmenter_(modules.GetSegmenter()),
       suggestion_filter_(modules.GetSuggestionFilter()),
-      single_kanji_dictionary_(
-          std::make_unique<dictionary::SingleKanjiDictionary>(
-              modules.GetDataManager())),
       pos_matcher_(modules.GetPosMatcher()),
       general_symbol_id_(pos_matcher_.GetGeneralSymbolId()),
       predictor_name_(std::move(predictor_name)),
@@ -276,9 +272,6 @@ std::vector<Result> DictionaryPredictor::RerankAndFilterResults(
       continue;
     }
 
-    // TODO(taku): Add new method to fill the Result::candidate_attributes.
-    single_kanji_dictionary_->GenerateDescription(result.value,
-                                                  &result.description);
     if ((result.candidate_attributes &
          converter::Candidate::PARTIALLY_KEY_CONSUMED) &&
         cursor_at_tail) {
@@ -389,41 +382,6 @@ int DictionaryPredictor::CalculateSingleKanjiCostOffset(
       std::max(0, single_kanji_max_cost - single_kanji_transition_cost);
   const int kSingleKanjiPredictionCostOffset = 800;  // ~= 500*ln(5)
   return wcost_diff + kSingleKanjiPredictionCostOffset;
-}
-
-std::string DictionaryPredictor::GetPredictionTypeDebugString(
-    PredictionTypes types) {
-  std::string debug_desc;
-  if (types & PredictionType::UNIGRAM) {
-    debug_desc.append(1, 'U');
-  }
-  if (types & PredictionType::BIGRAM) {
-    debug_desc.append(1, 'B');
-  }
-  if (types & PredictionType::REALTIME_TOP) {
-    debug_desc.append("R1");
-  } else if (types & PredictionType::REALTIME) {
-    debug_desc.append(1, 'R');
-  }
-  if (types & PredictionType::SUFFIX) {
-    debug_desc.append(1, 'S');
-  }
-  if (types & PredictionType::ENGLISH) {
-    debug_desc.append(1, 'E');
-  }
-  if (types & PredictionType::TYPING_CORRECTION) {
-    debug_desc.append(1, 'T');
-  }
-  if (types & PredictionType::TYPING_COMPLETION) {
-    debug_desc.append(1, 'C');
-  }
-  if (types & PredictionType::SUPPLEMENTAL_MODEL) {
-    debug_desc.append(1, 'X');
-  }
-  if (types & PredictionType::KEY_EXPANDED_IN_DICTIONARY) {
-    debug_desc.append(1, 'K');
-  }
-  return debug_desc;
 }
 
 // Returns cost for |result| when it's transitioned from |rid|.  Suffix penalty
