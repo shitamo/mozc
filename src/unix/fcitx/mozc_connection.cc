@@ -36,7 +36,6 @@
 #include "base/vlog.h"
 #include "base/util.h"
 #include "client/client.h"
-#include "ipc/ipc.h"
 #include "protocol/commands.pb.h"
 #include "unix/fcitx/fcitx_key_event_handler.h"
 #include "unix/fcitx/surrounding_text_util.h"
@@ -56,14 +55,11 @@ std::unique_ptr<mozc::client::ClientInterface> CreateAndConfigureClient() {
   return client;
 }
 
-MozcConnection::MozcConnection(
-    mozc::IPCClientFactoryInterface *client_factory)
+MozcConnection::MozcConnection()
     : handler_(new KeyEventHandler),
-      preedit_method_(mozc::config::Config::ROMAN),
-      client_factory_(client_factory) {
+      preedit_method_(mozc::config::Config::ROMAN) {
   MOZC_VLOG(1) << "MozcConnection is created";
   auto client = CreateAndConfigureClient();
-  client->SetIPCClientFactory(client_factory_.get());
   client_ = std::move(client);
 
   if (client_->EnsureConnection()) {
@@ -161,7 +157,7 @@ bool MozcConnection::TrySendCompositionMode(
     command.set_type(mozc::commands::SessionCommand::TURN_OFF_IME);
     command.set_composition_mode(old_mode);
   } else {
-    command.set_type(mozc::commands::SessionCommand::SWITCH_INPUT_MODE);
+    command.set_type(mozc::commands::SessionCommand::SWITCH_COMPOSITION_MODE);
     command.set_composition_mode(mode);
   }
   return TrySendRawCommand(command, out, out_error);
@@ -201,7 +197,7 @@ mozc::client::ClientInterface* MozcConnection::GetClient()
 }
 
 MozcConnection *MozcConnection::CreateMozcConnection() {
-  return new MozcConnection(new mozc::IPCClientFactory);
+  return new MozcConnection;
 }
 
 }  // namespace fcitx
