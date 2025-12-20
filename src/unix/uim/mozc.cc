@@ -992,7 +992,7 @@ set_composition_mode(uim_lisp mc_, uim_lisp id_, uim_lisp new_mode_)
     update_all(mc_, id);
     uim_scm_callf("mozc-context-set-on!", "oo", mc_, uim_scm_f());
   } else {
-    command.set_type(commands::SessionCommand::SWITCH_INPUT_MODE);
+    command.set_type(commands::SessionCommand::SWITCH_COMPOSITION_MODE);
     command.set_composition_mode(mode);
     context_slot[id].session->SendCommand(command, context_slot[id].output);
     context_slot[id].currentMode = mode; /* don't set this with DIRECT mode */
@@ -1008,7 +1008,7 @@ set_composition_on(uim_lisp id_)
   int id = C_INT(id_);
   commands::SessionCommand command;
 
-  command.set_type(commands::SessionCommand::SWITCH_INPUT_MODE);
+  command.set_type(commands::SessionCommand::SWITCH_COMPOSITION_MODE);
   command.set_composition_mode(context_slot[id].currentMode);
   context_slot[id].session->SendCommand(command, context_slot[id].output);
 
