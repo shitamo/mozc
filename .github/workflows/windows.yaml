@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
@@ -34,7 +34,7 @@ jobs:
           python -m pip install six
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -72,7 +72,7 @@ jobs:
           python build_mozc.py build -c Release package
 
       - name: upload Mozc64_gyp.msi
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Mozc64_gyp.msi
           path: src/out_win/Release/Mozc64.msi
@@ -85,13 +85,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -125,7 +125,7 @@ jobs:
           bazelisk build --config oss_windows --config release_build package
 
       - name: upload Mozc64_x64.msi
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Mozc64_x64.msi
           path: src/bazel-bin/win32/installer/Mozc64.msi
@@ -138,13 +138,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -178,7 +178,7 @@ jobs:
           bazelisk build package --config oss_windows --config release_build --platforms=//:windows-arm64
 
       - name: upload Mozc64_arm64.msi
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Mozc64_arm64.msi
           path: src/bazel-bin/win32/installer/Mozc64.msi
@@ -191,7 +191,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
@@ -203,7 +203,7 @@ jobs:
           python -m pip install six
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -234,13 +234,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -270,13 +270,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
