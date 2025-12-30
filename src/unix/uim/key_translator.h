@@ -34,8 +34,7 @@
 #include <uim.h>
 
 #include <map>
-#include <ext/hash_map>
-using __gnu_cxx::hash_map;
+#include <unordered_map>
 
 #include "base/port.h"
 #include "protocol/commands.pb.h"
@@ -63,7 +62,7 @@ class KeyTranslator {
                  commands::KeyEvent *out_event) const;
 
  private:
-  typedef hash_map<unsigned int, commands::KeyEvent::SpecialKey> SpecialKeyMap;
+  typedef std::unordered_map<unsigned int, commands::KeyEvent::SpecialKey> SpecialKeyMap;
   typedef std::map<unsigned int, commands::KeyEvent::ModifierKey> ModifierKeyMap;
   typedef std::map<unsigned int, std::pair<std::string, std::string> > KanaMap;
 
