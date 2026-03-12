@@ -671,6 +671,7 @@ mozc_cc_library(
     deps = [
         ":result",
         "//base:util",
+        "//base/container:flat_concurrent_cache",
         "//base/strings:assign",
         "//converter:attribute",
         "//converter:converter_interface",
@@ -679,6 +680,7 @@ mozc_cc_library(
         "//converter:segments",
         "//dictionary:dictionary_token",
         "//request:conversion_request",
+        "@com_google_absl//absl/hash",
         "@com_google_absl//absl/log",
         "@com_google_absl//absl/log:check",
         "@com_google_absl//absl/strings",
@@ -696,6 +698,7 @@ mozc_cc_test(
         "//converter:immutable_converter_interface",
         "//converter:inner_segment",
         "//converter:segments",
+        "//data_manager/testing:mock_data_manager",
         "//request:conversion_request",
         "//testing:gunit_main",
         "@com_google_absl//absl/strings",
