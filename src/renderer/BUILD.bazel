@@ -113,6 +113,7 @@ mozc_cc_library(
     deps = [
         ":renderer_interface",
         "//base:const",
+        "//base:random",
         "//base:system_util",
         "//base:vlog",
         "//client:client_interface",
@@ -275,10 +276,6 @@ mozc_macos_application(
         "//renderer:__subpackages__",
     ],
     deps = [":mozc_renderer_main_macos"],
-    # When we support Breakpad, uncomment the following block.
-    # additional_contents = {
-    #     "[Breakpad]" : "Frameworks",
-    # },
 )
 
 mozc_cc_library(
