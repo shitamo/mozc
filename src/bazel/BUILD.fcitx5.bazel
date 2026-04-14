@@ -8,6 +8,7 @@ package(
 # copts, hdrs, indludes: pkg-config --cflags $packages
 # linkopts: pkg-config --libs-only-l $packages
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "fcitx5",
     hdrs = glob([

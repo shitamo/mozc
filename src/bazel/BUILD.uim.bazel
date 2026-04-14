@@ -10,6 +10,7 @@ package(
 #
 # The default settings are for the supported Docker environment (Ubuntu 20.04).
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "uim",
     hdrs = glob([
