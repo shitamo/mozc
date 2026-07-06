@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build_x64:
+  build_on_x64:
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
     runs-on: windows-2025
     timeout-minutes: 120
@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: src/third_party_cache
-          key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
 
       - name: Install Dependencies
         shell: cmd
@@ -59,7 +59,7 @@ jobs:
         env:
           ANDROID_NDK_HOME: ""
         run: |
-          bazelisk build --config release_build package
+          bazelisk build package --config release_build
 
       - name: upload Mozc64_x64.msi
         uses: actions/upload-artifact@v6
@@ -68,7 +68,7 @@ jobs:
           path: src/bazel-bin/win32/installer/Mozc64.msi
           if-no-files-found: warn
 
-  build_universal:
+  build_universal_on_x64:
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
     runs-on: windows-2025
     timeout-minutes: 120
@@ -84,7 +84,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: src/third_party_cache
-          key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
 
       - name: Install Dependencies
         shell: cmd
@@ -112,7 +112,7 @@ jobs:
         env:
           ANDROID_NDK_HOME: ""
         run: |
-          bazelisk build --config release_build --config win_universal_installer package
+          bazelisk build package --config release_build --config win_universal_installer
 
       - name: upload Mozc64_universal.msi
         uses: actions/upload-artifact@v6
@@ -121,9 +121,9 @@ jobs:
           path: src/bazel-bin/win32/installer/Mozc64.msi
           if-no-files-found: warn
 
-  build_arm64:
-    # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
-    runs-on: windows-2025
+  build_on_arm64:
+    # https://github.com/actions/runner-images/blob/main/images/windows/Windows11-Arm64-Readme.md
+    runs-on: windows-11-arm
     timeout-minutes: 120
 
     steps:
@@ -137,7 +137,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: src/third_party_cache
-          key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
 
       - name: Install Dependencies
         shell: cmd
@@ -146,11 +146,11 @@ jobs:
         run: |
           python build_tools/update_deps.py
 
-      - name: Build Qt (arm64)
+      - name: Build Qt
         shell: cmd
         working-directory: .\src
         run: |
-          python build_tools/build_qt.py --release --confirm_license --target_arch=arm64
+          python build_tools/build_qt.py --release --confirm_license
 
       # This is needed only for GitHub Actions where free disk space is quite limited.
       - name: Delete Qt src to save disk space
@@ -165,7 +165,7 @@ jobs:
         env:
           ANDROID_NDK_HOME: ""
         run: |
-          bazelisk build package --config release_build --platforms=//:windows-arm64
+          bazelisk build package --config release_build
 
       - name: upload Mozc64_arm64.msi
         uses: actions/upload-artifact@v6
@@ -174,7 +174,7 @@ jobs:
           path: src/bazel-bin/win32/installer/Mozc64.msi
           if-no-files-found: warn
 
-  test:
+  test_on_x64:
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
     runs-on: windows-2025
     timeout-minutes: 120
@@ -190,7 +190,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: src/third_party_cache
-          key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
 
       - name: Install Dependencies
         shell: cmd
@@ -218,14 +218,62 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v6
         with:
-          name: test-logs-${{ runner.os }}
+          name: test-logs-${{ runner.os }}-${{ runner.arch }}
+          path: test_logs
+          if-no-files-found: ignore
+
+  test_on_arm64:
+    # https://github.com/actions/runner-images/blob/main/images/windows/Windows11-Arm64-Readme.md
+    runs-on: windows-11-arm
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Try to restore update_deps cache
+        uses: actions/cache@v5
+        with:
+          path: src/third_party_cache
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+
+      - name: Install Dependencies
+        shell: cmd
+        working-directory: .\src
+        # This command uses src/third_party_cache as the download cache.
+        run: |
+          python build_tools/update_deps.py
+
+      - name: runtests
+        shell: cmd
+        working-directory: .\src
+        env:
+          ANDROID_NDK_HOME: ""
+        run: |
+          bazelisk test ... -c dbg --build_tests_only --build_event_json_file=bep.jsonl
+
+      - name: Collect failing test logs
+        if: failure()
+        shell: cmd
+        working-directory: .\src
+        run: |
+          python build_tools\collect_test_logs.py --bep bep.jsonl --out "%GITHUB_WORKSPACE%\test_logs"
+
+      - name: Upload failing test logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-logs-${{ runner.os }}-${{ runner.arch }}
           path: test_logs
           if-no-files-found: ignore
 
   # actions/cache works without this job, but having this would increase the likelihood of cache hit
   # in other jobs. Another approach would be to use "needs:".
   # https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow
-  cache_deps:
+  cache_deps_on_x64:
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
     runs-on: windows-2025
     timeout-minutes: 15
@@ -241,7 +289,35 @@ jobs:
         uses: actions/cache@v5
         with:
           path: src/third_party_cache
-          key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
+
+      - name: Install Dependencies
+        shell: cmd
+        working-directory: .\src
+        # This command uses src/third_party_cache as the download cache.
+        run: |
+          python build_tools/update_deps.py --cache_only
+
+  # actions/cache works without this job, but having this would increase the likelihood of cache hit
+  # in other jobs. Another approach would be to use "needs:".
+  # https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow
+  cache_deps_on_arm64:
+    # https://github.com/actions/runner-images/blob/main/images/windows/Windows11-Arm64-Readme.md
+    runs-on: windows-11-arm
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Try to restore update_deps cache
+        uses: actions/cache@v5
+        with:
+          path: src/third_party_cache
+          key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
 
       - name: Install Dependencies
         shell: cmd
