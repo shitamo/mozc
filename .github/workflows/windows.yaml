@@ -22,13 +22,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -62,7 +62,7 @@ jobs:
           bazelisk build package --config release_build
 
       - name: upload Mozc64_x64.msi
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc64_x64.msi
           path: src/bazel-bin/win32/installer/Mozc64.msi
@@ -75,13 +75,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -115,7 +115,7 @@ jobs:
           bazelisk build package --config release_build --config win_universal_installer
 
       - name: upload Mozc64_universal.msi
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc64_universal.msi
           path: src/bazel-bin/win32/installer/Mozc64.msi
@@ -128,13 +128,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -168,7 +168,7 @@ jobs:
           bazelisk build package --config release_build
 
       - name: upload Mozc64_arm64.msi
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc64_arm64.msi
           path: src/bazel-bin/win32/installer/Mozc64.msi
@@ -181,13 +181,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -216,7 +216,7 @@ jobs:
 
       - name: Upload failing test logs
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: test-logs-${{ runner.os }}-${{ runner.arch }}
           path: test_logs
@@ -229,13 +229,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -264,7 +264,7 @@ jobs:
 
       - name: Upload failing test logs
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: test-logs-${{ runner.os }}-${{ runner.arch }}
           path: test_logs
@@ -280,13 +280,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -308,13 +308,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/build_tools/update_deps.py') }}

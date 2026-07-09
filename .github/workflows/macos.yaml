@@ -22,13 +22,13 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -50,7 +50,7 @@ jobs:
           bazelisk build package --macos_cpus=arm64 --config release_build
 
       - name: upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc_arm64.pkg
           path: src/bazel-bin/mac/Mozc.pkg
@@ -63,13 +63,13 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -91,7 +91,7 @@ jobs:
           bazelisk build package --macos_cpus=x86_64 --config release_build
 
       - name: upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc_intel64.pkg
           path: src/bazel-bin/mac/Mozc.pkg
@@ -104,13 +104,13 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -132,7 +132,7 @@ jobs:
           bazelisk build package --macos_cpus=x86_64,arm64 --config release_build
 
       - name: upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Mozc_universal_binary.pkg
           path: src/bazel-bin/mac/Mozc.pkg
@@ -145,13 +145,13 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
@@ -175,7 +175,7 @@ jobs:
 
       - name: Upload failing test logs
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: test-logs-${{ runner.os }}
           path: test_logs
@@ -191,13 +191,13 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           persist-credentials: false
 
       - name: Try to restore update_deps cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: src/third_party_cache
           key: update_deps-${{ runner.os }}-${{ hashFiles('src/build_tools/update_deps.py') }}
