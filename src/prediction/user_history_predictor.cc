@@ -2335,6 +2335,23 @@ void UserHistoryPredictor::InsertHistoryForConversionSegments(
            next_fps_to_set, allow_partial_match, last_access_time,
            revert_entries, entry_flags);
 
+    // Learn CloseBracket when OpenBracket is committed.
+    absl::string_view close_bracket_key;
+    absl::string_view close_bracket_value;
+    if (Util::IsOpenBracket(segment.key, &close_bracket_key) &&
+        Util::IsOpenBracket(segment.value, &close_bracket_value)) {
+      Insert(request, 0, 0, close_bracket_key, close_bracket_value,
+             segment.description, {}, {}, /*allow_partial_match=*/false,
+             last_access_time, revert_entries);
+    } else if (has_content_kv &&
+               Util::IsOpenBracket(segment.content_key, &close_bracket_key) &&
+               Util::IsOpenBracket(segment.content_value,
+                                   &close_bracket_value)) {
+      Insert(request, 0, 0, close_bracket_key, close_bracket_value,
+             segment.description, {}, {}, /*allow_partial_match=*/false,
+             last_access_time, revert_entries);
+    }
+
     prev_value = segment.value;
   }
 }

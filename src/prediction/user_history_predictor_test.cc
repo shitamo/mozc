@@ -5280,6 +5280,43 @@ TEST_F(UserHistoryPredictorTest, NumberCounterSuffixPrecedingHistory) {
   }
 }
 
+TEST_F(UserHistoryPredictorTest, BracketPairLearning) {
+  UserHistoryPredictor* predictor = GetUserHistoryPredictorWithClearedHistory();
+  SegmentsProxy segments_proxy;
+
+  // 1. Commit open bracket "「" -> "『".
+  {
+    constexpr absl::string_view kKey = "「";
+    constexpr absl::string_view kValue = "『";
+    const ConversionRequest convreq =
+        SetUpInputForPrediction(kKey, &composer_, &segments_proxy);
+    segments_proxy.AddCandidate(0, kValue);
+    predictor->Finish(convreq, segments_proxy.MakeLearningResults(), kRevertId);
+  }
+
+  // 2. Predict for close bracket "」" -> "』" should be suggested.
+  {
+    const ConversionRequest convreq =
+        SetUpInputForPrediction("」", &composer_, &segments_proxy);
+    const std::vector<Result> results = predictor->Predict(convreq);
+    ASSERT_FALSE(results.empty());
+    EXPECT_EQ(results.front().key, "」");
+    EXPECT_EQ(results.front().value, "』");
+  }
+
+  // 3. Revert open bracket -> close bracket should also be removed.
+  {
+    predictor->Revert(kRevertId);
+    const ConversionRequest convreq =
+        SetUpInputForPrediction("」", &composer_, &segments_proxy);
+    const std::vector<Result> results = predictor->Predict(convreq);
+    auto it = absl::c_find_if(results, [](const Result& r) {
+      return r.key == "」" && r.value == "』";
+    });
+    EXPECT_EQ(it, results.end());
+  }
+}
+
 TEST_F(UserHistoryPredictorTest, ContentValueZeroQuery) {
   UserHistoryPredictor* predictor = GetUserHistoryPredictorWithClearedHistory();
 
