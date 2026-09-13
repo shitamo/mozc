@@ -182,7 +182,7 @@ MozcEngine::MozcEngine(Instance* instance)
   instance_->userInterfaceManager().registerAction("mozc-tool-config",
                                                    &configToolAction_);
   configToolAction_.setShortText(_("Configuration Tool"));
-  configToolAction_.setIcon("fcitx_mozc_tool");
+  configToolAction_.setIcon("fcitx_mozc_properties");
   configToolAction_.connect<SimpleAction::Activated>([](InputContext*) {
     mozc::Process::SpawnMozcProcess("mozc_tool", "--mode=config_dialog");
   });
@@ -265,7 +265,7 @@ void MozcEngine::keyEvent(const InputMethodEntry& entry, KeyEvent& event) {
     layout = group.defaultLayout();
   }
 
-  const bool isJP = (layout == "jp" || stringutils::startsWith(layout, "jp-"));
+  const bool isJP = (layout == "jp" || layout.starts_with("jp-"));
 
   if (mozc_state->ProcessKeyEvent(event.rawKey().sym(), event.rawKey().code(),
                                   event.rawKey().states(), isJP,
