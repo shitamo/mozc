@@ -18,9 +18,7 @@ mozc_cc_library(
     deps = [
         "//base:port",
         "//base:vlog",
-        "//client",
         "//protocol:commands_cc_proto",
-        "//protocol:config_cc_proto",
         "@com_google_absl//absl/log:check",
         "@uim",
     ],
