@@ -38,8 +38,6 @@ mozc_cc_binary(
         # and uim_dynlib_instance_quit (see mozc.map's comment for why --
         # short version: dynlib.h #defines the uim_plugin_instance_* names
         # mozc.cc actually writes to these before compilation).
-        "-Wl,--undefined=uim_dynlib_instance_init",
-        "-Wl,--undefined=uim_dynlib_instance_quit",
         "-Wl,--version-script=$(location mozc.map)",
         "-Wl,-Bsymbolic-functions",
     ],
