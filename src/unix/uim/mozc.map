@@ -1,0 +1,26 @@
+# Linker version script for libuim-mozc.so.
+#
+# uim dlopen()s this plugin into the host process (e.g. digiKam) and only
+# ever looks up two entry points by name. Every other symbol -- notably the
+# statically-linked copies of protobuf/absl -- must stay hidden from the
+# dynamic symbol table. Without this, the dynamic linker's global symbol
+# scope can bind this plugin's protobuf/absl calls to a different,
+# ABI-incompatible libprotobuf/libabsl already loaded by the host process,
+# causing crashes such as a SIGSEGV inside
+# google::protobuf::internal::ThreadSafeArena::GetSerialArenaFallback().
+#
+# NOTE: the real, compiled symbol names are uim_dynlib_instance_init/_quit,
+# not uim_plugin_instance_init/_quit. mozc.cc defines functions literally
+# named uim_plugin_instance_init/_quit, but /usr/include/uim/dynlib.h
+# (picked over the older plugin.h on systems with UIM_VERSION_REQUIRE(1,6,0))
+# #defines those names to uim_dynlib_instance_init/_quit for source
+# compatibility, so the preprocessor renames them before the compiler ever
+# sees them. Listing the old names here silently matches nothing, which is
+# why they were being hidden along with everything else.
+UIMMOZC_1.0 {
+  global:
+    uim_dynlib_instance_init;
+    uim_dynlib_instance_quit;
+  local:
+    *;
+};

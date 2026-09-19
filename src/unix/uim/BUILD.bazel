@@ -27,6 +27,22 @@ mozc_cc_library(
 mozc_cc_binary(
     name = "libuim-mozc.so",
     srcs = ["mozc.cc"],
+    additional_linker_inputs = ["mozc.map"],
+    linkopts = [
+        # Hide every symbol except the two uim plugin entry points so this
+        # plugin's statically-linked protobuf/absl cannot be interposed by
+        # (or interpose) a different libprotobuf/libabsl already loaded in
+        # the host process (e.g. digiKam). See mozc.map for details.
+        #
+        # The real, compiled entry-point names are uim_dynlib_instance_init
+        # and uim_dynlib_instance_quit (see mozc.map's comment for why --
+        # short version: dynlib.h #defines the uim_plugin_instance_* names
+        # mozc.cc actually writes to these before compilation).
+        "-Wl,--undefined=uim_dynlib_instance_init",
+        "-Wl,--undefined=uim_dynlib_instance_quit",
+        "-Wl,--version-script=$(location mozc.map)",
+        "-Wl,-Bsymbolic-functions",
+    ],
     linkshared = 1,
     linkstatic = 1,
     deps = [
