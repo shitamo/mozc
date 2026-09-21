@@ -897,7 +897,7 @@ struct eqstr
 };
 
 typedef std::unordered_map<std::string_view, int> KeyMap;
-static KeyMap key_map;
+static KeyMap &key_map = *new KeyMap();
 
 static void install_keymap(void)
 {
