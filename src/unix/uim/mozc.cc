@@ -570,12 +570,47 @@ get_nr_candidates(uim_lisp id_)
   return MAKE_INT(output->candidate_window().size());
 }
 
+/* output->candidate_window() only ever holds the page mozc currently
+ * has loaded (9 candidates at a time), never the whole candidate
+ * list. get_nth_candidate()/get_nth_label()/get_nth_annotation() are
+ * called by uim to pre-fetch text for a page BEFORE the user has
+ * actually navigated there (so the popover can render instantly),
+ * and previously just did (nth % 9) against whatever page mozc
+ * happened to still have loaded - returning some OTHER candidate's
+ * text mislabeled as belonging to the requested one whenever that
+ * page hadn't been fetched yet. Turn mozc's own page to match first.
+ * This only updates context_slot[id].output/prev_page directly
+ * (unlike select_candidate()'s page turn) and does not call
+ * update_all(), so it can't re-enter uim/GTK4 callbacks in the
+ * middle of a candidate-text fetch loop. */
+static void
+ensure_mozc_page(int id, int target_page)
+{
+  int guard = context_slot[id].output->candidate_window().size(); /* generous loop cap */
+
+  while (context_slot[id].prev_page != target_page && guard-- > 0) {
+    commands::SessionCommand command;
+    command.set_type(target_page > context_slot[id].prev_page
+                      ? commands::SessionCommand::CONVERT_NEXT_PAGE
+                      : commands::SessionCommand::CONVERT_PREV_PAGE);
+    if (!context_slot[id].session->SendCommand(command, context_slot[id].output))
+      break;
+
+    const commands::CandidateWindow &candidates =
+      context_slot[id].output->candidate_window();
+    int new_page = candidates.has_focused_index()
+                      ? candidates.focused_index() / 9
+                      : context_slot[id].prev_page;
+    if (new_page == context_slot[id].prev_page)
+      break; /* didn't move; avoid spinning forever */
+    context_slot[id].prev_page = new_page;
+  }
+}
+
 static uim_lisp
 get_nth_candidate(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
-  commands::Output *output = context_slot[id].output;
-  const commands::CandidateWindow &candidates = output->candidate_window();
   const char *cand, *prefix, *suffix;
   char *s;
 
@@ -583,12 +618,16 @@ get_nth_candidate(uim_lisp id_, uim_lisp nth_)
   int idx;
   int nr;
   int page_nr;
-  
+
   nth = C_INT(nth_);
-  nr = candidates.size();
-  page_nr = candidates.candidate_size();
+  nr = context_slot[id].output->candidate_window().size();
 
   if (nth < nr) {
+    ensure_mozc_page(id, nth / 9);
+
+    commands::Output *output = context_slot[id].output;
+    const commands::CandidateWindow &candidates = output->candidate_window();
+    page_nr = candidates.candidate_size();
     idx = nth % 9;
 
     if (idx < page_nr) {
@@ -610,20 +649,22 @@ static uim_lisp
 get_nth_label(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
-  commands::Output *output = context_slot[id].output;
-  const commands::CandidateWindow &candidates = output->candidate_window();
   const char *label;
 
   int nth;
   int idx;
   int nr;
   int page_nr;
-  
+
   nth = C_INT(nth_);
-  nr = candidates.size();
-  page_nr = candidates.candidate_size();
+  nr = context_slot[id].output->candidate_window().size();
 
   if (nth < nr) {
+    ensure_mozc_page(id, nth / 9);
+
+    commands::Output *output = context_slot[id].output;
+    const commands::CandidateWindow &candidates = output->candidate_window();
+    page_nr = candidates.candidate_size();
     idx = nth % 9;
     if (idx < page_nr)
       label = candidates.candidate(idx).annotation().shortcut().c_str();
@@ -639,20 +680,22 @@ static uim_lisp
 get_nth_annotation(uim_lisp id_, uim_lisp nth_)
 {
   int id = C_INT(id_);
-  commands::Output *output = context_slot[id].output;
-  const commands::CandidateWindow &candidates = output->candidate_window();
   const char *annotation;
 
   int nth;
   int idx;
   int nr;
   int page_nr;
-  
+
   nth = C_INT(nth_);
-  nr = candidates.size();
-  page_nr = candidates.candidate_size();
+  nr = context_slot[id].output->candidate_window().size();
 
   if (nth < nr) {
+    ensure_mozc_page(id, nth / 9);
+
+    commands::Output *output = context_slot[id].output;
+    const commands::CandidateWindow &candidates = output->candidate_window();
+    page_nr = candidates.candidate_size();
     idx = nth % 9;
     if (idx < page_nr)
       annotation = candidates.candidate(idx).annotation().description().c_str();
@@ -897,6 +940,17 @@ struct eqstr
 };
 
 typedef std::unordered_map<std::string_view, int> KeyMap;
+// Intentionally heap-allocated and never destroyed: key_map is a plain
+// static object whose non-trivial destructor would be invoked via
+// atexit/__cxa_atexit at process exit(). Since libuim-mozc.so is dlopen'd
+// at runtime, that destructor call is ordered *after* whatever registered
+// Qt's cleanup path first, but *before* uim's own explicit unload sequence
+// (QFactoryLoader dtor -> uim_quit -> dynlib-unload-all ->
+// uim_plugin_instance_quit -> key_map.clear()) runs later in the same
+// exit() LIFO chain. That leaves uim_plugin_instance_quit() clearing an
+// already-freed hashtable, corrupting the heap. The keys are string_views
+// into key_tab's string literals (static storage, never freed), so leaking
+// the map itself is harmless and avoids the ordering hazard entirely.
 static KeyMap &key_map = *new KeyMap();
 
 static void install_keymap(void)
@@ -1026,8 +1080,29 @@ static uim_lisp
 select_candidate(uim_lisp mc_, uim_lisp id_, uim_lisp idx_)
 {
   int id = C_INT(id_);
-  int idx = C_INT(idx_) % 9;
-  
+  int requested_idx = C_INT(idx_);
+  int requested_page = requested_idx / 9;
+  int idx = requested_idx % 9;
+
+  if (requested_page != context_slot[id].prev_page) {
+    /* uim is asking to move the highlight onto a page mozc hasn't
+     * fetched yet. output->candidate_window() only ever holds the
+     * page mozc currently has loaded, so resolving a candidate id
+     * against it here would name a candidate on the WRONG
+     * (currently-shown) page, which is what used to send mozc a
+     * bogus SELECT/HIGHLIGHT and knock it back to page 0. Ask mozc
+     * to actually turn the page instead; its response repopulates
+     * candidate_window() for the new page, and update_candidates()
+     * picks up the correct focused index from there. */
+    commands::SessionCommand command;
+    command.set_type(requested_page > context_slot[id].prev_page
+                      ? commands::SessionCommand::CONVERT_NEXT_PAGE
+                      : commands::SessionCommand::CONVERT_PREV_PAGE);
+    context_slot[id].session->SendCommand(command, context_slot[id].output);
+    update_all(mc_, id);
+    return uim_scm_t();
+  }
+
 #if USE_CASCADING_CANDIDATES
   if (idx >= context_slot[id].unique_candidate_ids->size())
 #else
@@ -1044,7 +1119,19 @@ select_candidate(uim_lisp mc_, uim_lisp id_, uim_lisp idx_)
 #endif
 
   commands::SessionCommand command;
-  command.set_type(commands::SessionCommand::SELECT_CANDIDATE);
+  /* select_candidate() (exposed as "mozc-lib-set-candidate-index")
+   * fires on every highlight-index change reported by uim -
+   * page-forward/back, arrow-key browsing, clicking a candidate row
+   * - not only on an explicit confirm. SELECT_CANDIDATE tells the
+   * mozc session to close the candidate window (see
+   * protocol/commands.proto), which was resetting/closing the whole
+   * candidate popover just from moving the highlight, e.g. via the
+   * ">" page button. HIGHLIGHT_CANDIDATE updates the session's
+   * chosen candidate for this segment the same way, without closing
+   * the window; a real key press (Enter/Space, handled by
+   * press_key() above) still commits using whatever candidate is
+   * currently highlighted. */
+  command.set_type(commands::SessionCommand::HIGHLIGHT_CANDIDATE);
   command.set_id(cand_id);
   context_slot[id].session->SendCommand(command, context_slot[id].output);
   update_all(mc_, id);
