@@ -570,6 +570,24 @@ get_nr_candidates(uim_lisp id_)
   return MAKE_INT(output->candidate_window().size());
 }
 
+/* mozc wraps its candidate pages around at both ends, so turning
+ * toward a page with a smaller index is not always a backward move -
+ * e.g. from the last page to the first, forward is one step and
+ * backward is every other page in between. Returns true when forward
+ * reaches target_page from current_page sooner than backward; ties
+ * go to backward, matching the previous always-backward behavior. */
+static bool
+mozc_page_forward(int current_page, int target_page, int total_pages)
+{
+  if (total_pages <= 0)
+    return target_page > current_page;
+
+  int forward = (target_page - current_page + total_pages) % total_pages;
+  int backward = (current_page - target_page + total_pages) % total_pages;
+
+  return forward < backward;
+}
+
 /* output->candidate_window() only ever holds the page mozc currently
  * has loaded (9 candidates at a time), never the whole candidate
  * list. get_nth_candidate()/get_nth_label()/get_nth_annotation() are
@@ -586,11 +604,13 @@ get_nr_candidates(uim_lisp id_)
 static void
 ensure_mozc_page(int id, int target_page)
 {
-  int guard = context_slot[id].output->candidate_window().size(); /* generous loop cap */
+  int nr = context_slot[id].output->candidate_window().size();
+  int total_pages = (nr + 8) / 9; /* ceil(nr / 9) */
+  int guard = nr; /* generous loop cap */
 
   while (context_slot[id].prev_page != target_page && guard-- > 0) {
     commands::SessionCommand command;
-    command.set_type(target_page > context_slot[id].prev_page
+    command.set_type(mozc_page_forward(context_slot[id].prev_page, target_page, total_pages)
                       ? commands::SessionCommand::CONVERT_NEXT_PAGE
                       : commands::SessionCommand::CONVERT_PREV_PAGE);
     if (!context_slot[id].session->SendCommand(command, context_slot[id].output))
@@ -1094,8 +1114,11 @@ select_candidate(uim_lisp mc_, uim_lisp id_, uim_lisp idx_)
      * to actually turn the page instead; its response repopulates
      * candidate_window() for the new page, and update_candidates()
      * picks up the correct focused index from there. */
+    int nr = context_slot[id].output->candidate_window().size();
+    int total_pages = (nr + 8) / 9; /* ceil(nr / 9) */
+
     commands::SessionCommand command;
-    command.set_type(requested_page > context_slot[id].prev_page
+    command.set_type(mozc_page_forward(context_slot[id].prev_page, requested_page, total_pages)
                       ? commands::SessionCommand::CONVERT_NEXT_PAGE
                       : commands::SessionCommand::CONVERT_PREV_PAGE);
     context_slot[id].session->SendCommand(command, context_slot[id].output);
